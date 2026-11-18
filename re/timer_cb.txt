@@ -1,0 +1,306 @@
+100370 push   ebx
+100371 push   esi
+100372 push   edi
+100373 push   ebp
+100374 mov    ebx,DWORD PTR ds:0x231f84
+10037a mov    esi,DWORD PTR ds:0x231f7c
+100380 mov    edi,DWORD PTR ds:0x231f74
+100386 mov    ebp,DWORD PTR ds:0x231fd0
+10038c mov    eax,ds:0x231f88
+100391 inc    DWORD PTR ds:0x231f88
+100397 call   0x100340
+10039c mov    ecx,DWORD PTR ds:0x231f68
+1003a2 cmp    ecx,0x1
+1003a5 jne    0x1007b5
+1003ab mov    ebp,DWORD PTR ds:0x231fd0
+1003b1 mov    edi,DWORD PTR ds:0x231f74
+1003b7 mov    ebx,DWORD PTR ds:0x231f84
+1003bd mov    esi,DWORD PTR ds:0x231f7c
+1003c3 test   ebx,ebx
+1003c5 jne    0x1003fe
+1003c7 cmp    esi,0x3a
+1003ca jne    0x1003fe
+1003cc cmp    ebx,DWORD PTR ds:0x231fd4
+1003dd cmp    esi,ebp
+1003e9 je     0x1003fe
+1003eb mov    edi,0xffffff00
+1003f0 mov    DWORD PTR ds:0x231f70,ecx
+1003f6 mov    DWORD PTR ds:0x231fd4,ebx
+1003fc mov    ebp,esi
+1003fe cmp    ebx,0x1
+100401 jne    0x10043a
+100403 cmp    esi,0x3a
+100406 jne    0x10043a
+100408 cmp    ebx,DWORD PTR ds:0x231fd4
+100419 cmp    esi,ebp
+100425 je     0x10043a
+100427 mov    ecx,0x2
+10042c mov    DWORD PTR ds:0x231fd4,ebx
+100432 mov    ebp,esi
+100434 mov    DWORD PTR ds:0x231f70,ecx
+10043a cmp    ebx,0x2
+10043d jne    0x10047b
+10043f cmp    esi,0xc
+100442 jne    0x10047b
+100444 cmp    ebx,DWORD PTR ds:0x231fd4
+100455 cmp    esi,ebp
+100461 je     0x10047b
+100463 mov    ecx,0x1
+100468 mov    edi,0xffffff00
+10046d mov    DWORD PTR ds:0x231fd4,ebx
+100473 mov    ebp,esi
+100475 mov    DWORD PTR ds:0x231f70,ecx
+10047b cmp    ebx,0x7
+10047e jne    0x1004b7
+100480 cmp    esi,0x28
+100483 jne    0x1004b7
+100485 cmp    ebx,DWORD PTR ds:0x231fd4
+100496 cmp    esi,ebp
+1004a2 je     0x1004b7
+1004a4 mov    ecx,0x2
+1004a9 mov    DWORD PTR ds:0x231fd4,ebx
+1004af mov    ebp,esi
+1004b1 mov    DWORD PTR ds:0x231f70,ecx
+1004b7 cmp    ebx,0x8
+1004ba jne    0x1004ed
+1004bc test   esi,esi
+1004be jne    0x1004ed
+1004c0 cmp    ebx,DWORD PTR ds:0x231fd4
+1004d1 cmp    esi,ebp
+1004dd je     0x1004ed
+1004df mov    DWORD PTR ds:0x231f70,esi
+1004e5 mov    DWORD PTR ds:0x231fd4,ebx
+1004eb mov    ebp,esi
+1004ed cmp    ebx,0xb
+1004f0 jne    0x100529
+1004f2 cmp    esi,0x3a
+1004f5 jne    0x100529
+1004f7 cmp    ebx,DWORD PTR ds:0x231fd4
+100508 cmp    esi,ebp
+100514 je     0x100529
+100516 mov    ecx,0x3
+10051b mov    DWORD PTR ds:0x231fd4,ebx
+100521 mov    ebp,esi
+100523 mov    DWORD PTR ds:0x231f70,ecx
+100529 cmp    ebx,0xc
+10052c jne    0x100569
+10052e test   esi,esi
+100530 jne    0x100569
+100532 cmp    ebx,DWORD PTR ds:0x231fd4
+100543 cmp    esi,ebp
+10054f je     0x100569
+100551 mov    ecx,0x1
+100556 mov    edi,0xffffff00
+10055b mov    DWORD PTR ds:0x231fd4,ebx
+100561 mov    ebp,esi
+100563 mov    DWORD PTR ds:0x231f70,ecx
+100569 cmp    ebx,0xf
+10056c jne    0x1005a5
+10056e cmp    esi,0x3a
+100571 jne    0x1005a5
+100573 cmp    ebx,DWORD PTR ds:0x231fd4
+100584 cmp    esi,ebp
+100590 je     0x1005a5
+100592 mov    ecx,0x3
+100597 mov    DWORD PTR ds:0x231fd4,ebx
+10059d mov    ebp,esi
+10059f mov    DWORD PTR ds:0x231f70,ecx
+1005a5 cmp    ebx,0x10
+1005a8 jne    0x1005e5
+1005aa test   esi,esi
+1005ac jne    0x1005e5
+1005ae cmp    ebx,DWORD PTR ds:0x231fd4
+1005bf cmp    esi,ebp
+1005cb je     0x1005e5
+1005cd mov    ecx,0x1
+1005d2 mov    edi,0xffffff00
+1005d7 mov    DWORD PTR ds:0x231fd4,ebx
+1005dd mov    ebp,esi
+1005df mov    DWORD PTR ds:0x231f70,ecx
+1005e5 cmp    ebx,0x13
+1005e8 jne    0x100621
+1005ea cmp    esi,0x3a
+1005ed jne    0x100621
+1005ef cmp    ebx,DWORD PTR ds:0x231fd4
+100600 cmp    esi,ebp
+10060c je     0x100621
+10060e mov    ecx,0x3
+100613 mov    DWORD PTR ds:0x231fd4,ebx
+100619 mov    ebp,esi
+10061b mov    DWORD PTR ds:0x231f70,ecx
+100621 cmp    ebx,0x14
+100624 jne    0x100661
+100626 test   esi,esi
+100628 jne    0x100661
+10062a cmp    ebx,DWORD PTR ds:0x231fd4
+10063b cmp    esi,ebp
+100647 je     0x100661
+100649 mov    ecx,0x1
+10064e mov    edi,0xffffff00
+100653 mov    DWORD PTR ds:0x231fd4,ebx
+100659 mov    ebp,esi
+10065b mov    DWORD PTR ds:0x231f70,ecx
+100661 cmp    ebx,0x19
+100664 jne    0x10069d
+100666 cmp    esi,0x28
+100669 jne    0x10069d
+10066b cmp    ebx,DWORD PTR ds:0x231fd4
+10067c cmp    esi,ebp
+100688 je     0x10069d
+10068a mov    ecx,0x2
+10068f mov    DWORD PTR ds:0x231fd4,ebx
+100695 mov    ebp,esi
+100697 mov    DWORD PTR ds:0x231f70,ecx
+10069d cmp    ebx,0x1a
+1006a0 jne    0x1006d8
+1006a2 test   esi,esi
+1006a4 jne    0x1006d8
+1006a6 cmp    ebx,DWORD PTR ds:0x231fd4
+1006b7 cmp    esi,ebp
+1006c3 je     0x1006d8
+1006c5 mov    edi,0xffffff00
+1006ca mov    DWORD PTR ds:0x231f70,esi
+1006d0 mov    DWORD PTR ds:0x231fd4,ebx
+1006d6 mov    ebp,esi
+1006d8 cmp    ebx,0x1e
+1006db jne    0x100714
+1006dd cmp    esi,0x1a
+1006e0 jne    0x100714
+1006e2 cmp    ebx,DWORD PTR ds:0x231fd4
+1006f3 cmp    esi,ebp
+1006ff je     0x100714
+100701 mov    ecx,0x3
+100706 mov    DWORD PTR ds:0x231fd4,ebx
+10070c mov    ebp,esi
+10070e mov    DWORD PTR ds:0x231f70,ecx
+100714 cmp    ebx,0x1e
+100717 jne    0x100755
+100719 cmp    esi,0x20
+10071c jne    0x100755
+10071e cmp    ebx,DWORD PTR ds:0x231fd4
+10072f cmp    esi,ebp
+10073b je     0x100755
+10073d mov    ecx,0x1
+100742 mov    edi,0xffffff00
+100747 mov    DWORD PTR ds:0x231fd4,ebx
+10074d mov    ebp,esi
+10074f mov    DWORD PTR ds:0x231f70,ecx
+100755 mov    DWORD PTR ds:0x231f84,ebx
+10075b mov    DWORD PTR ds:0x231f7c,esi
+100761 mov    DWORD PTR ds:0x231f74,edi
+100767 mov    DWORD PTR ds:0x231fd0,ebp
+10076d cmp    ebx,0x21
+100770 jne    0x1007b5
+100772 cmp    esi,0x20
+100775 jne    0x1007b5
+100777 cmp    ebx,DWORD PTR ds:0x231fd4
+100782 mov    esi,DWORD PTR ds:0x231f7c
+10078e cmp    esi,ebp
+10079a je     0x1007b5
+10079c mov    ebp,0x4
+1007a1 mov    DWORD PTR ds:0x231fd4,ebx
+1007a7 mov    DWORD PTR ds:0x231fd0,esi
+1007ad mov    DWORD PTR ds:0x231f70,ebp
+1007b3 mov    ebp,esi
+1007b5 mov    ebp,DWORD PTR ds:0x231fd0
+1007bb mov    edi,DWORD PTR ds:0x231f74
+1007c1 mov    esi,DWORD PTR ds:0x231f7c
+1007c7 mov    eax,ds:0x231f68
+1007cc mov    ebx,DWORD PTR ds:0x231f84
+1007d2 cmp    eax,0x2
+1007d5 jne    0x100855
+1007db test   ebx,ebx
+1007dd jne    0x10081a
+1007df test   esi,esi
+1007e1 jne    0x10081a
+1007e3 cmp    ebx,DWORD PTR ds:0x231fd4
+1007f4 cmp    ebx,ebp
+100800 je     0x10081a
+100802 mov    ecx,0x1
+100807 mov    edi,0xffffff00
+10080c mov    DWORD PTR ds:0x231fd4,ebx
+100812 mov    ebp,ebx
+100814 mov    DWORD PTR ds:0x231f70,ecx
+10081a cmp    ebx,0x3
+10081d jne    0x100855
+10081f test   esi,esi
+100821 jne    0x100855
+100823 cmp    ebx,DWORD PTR ds:0x231fd4
+100834 cmp    esi,ebp
+100840 je     0x100855
+100842 mov    ecx,0x4
+100847 mov    DWORD PTR ds:0x231fd4,ebx
+10084d mov    ebp,esi
+10084f mov    DWORD PTR ds:0x231f70,ecx
+100855 cmp    DWORD PTR ds:0x231f70,0x0
+10085c jne    0x10086c
+10085e test   edi,edi
+100860 jge    0x100865
+100862 add    edi,0x4
+100865 test   edi,edi
+100867 jle    0x10086c
+100869 sub    edi,0x4
+10086c cmp    DWORD PTR ds:0x231f70,0x1
+100873 jne    0x100884
+100875 add    edi,0x2
+100878 test   edi,edi
+10087a jle    0x100884
+10087c xor    edi,edi
+10087e mov    DWORD PTR ds:0x231f70,edi
+100884 mov    eax,ds:0x231f70
+100889 cmp    eax,0x2
+10088c jne    0x10089d
+10088e sub    edi,eax
+100890 cmp    edi,0xffffff00
+100896 jge    0x10089d
+100898 mov    edi,0xffffff00
+10089d cmp    DWORD PTR ds:0x231f70,0x3
+1008a4 jne    0x1008b6
+1008a6 sub    edi,0x8
+1008a9 cmp    edi,0xffffff00
+1008af jge    0x1008b6
+1008b1 mov    edi,0xffffff00
+1008b6 cmp    DWORD PTR ds:0x231f70,0x4
+1008bd jne    0x1008cd
+1008bf dec    edi
+1008c0 cmp    edi,0xffffff00
+1008c6 jge    0x1008cd
+1008c8 mov    edi,0xffffff00
+1008cd cmp    DWORD PTR ds:0x231f70,0x5
+1008d4 jne    0x1008e3
+1008d6 inc    edi
+1008d7 test   edi,edi
+1008d9 jle    0x1008e3
+1008db xor    edi,edi
+1008dd mov    DWORD PTR ds:0x231f70,edi
+1008e3 mov    DWORD PTR ds:0x231fd0,ebp
+1008e9 mov    DWORD PTR ds:0x231f74,edi
+1008ef mov    DWORD PTR ds:0x231f7c,esi
+1008f5 mov    DWORD PTR ds:0x231f84,ebx
+1008fb pop    ebp
+1008fc pop    edi
+1008fd pop    esi
+1008fe pop    ebx
+1008ff ret
+100900 mov    edx,DWORD PTR ds:0x231f74
+100906 mov    eax,ds:0x231f78
+10090b jmp    0x100a00
+100910 mov    edx,DWORD PTR ds:0x231f74
+100916 mov    eax,DWORD PTR [esp+0x4]
+10091a cmp    DWORD PTR ds:0x231f70,0x0
+100921 jne    0x10094b
+100923 cmp    eax,0x10
+100926 jne    0x10092d
+100928 mov    edx,0x80
+10092d cmp    eax,0x11
+100930 jne    0x100937
+100932 mov    edx,0xffffff80
+100937 cmp    eax,0x12
+10093a jne    0x100941
+10093c mov    edx,0x40
+100941 cmp    eax,0x13
+100944 jne    0x10094b
+100946 mov    edx,0xffffffc0
+10094b mov    DWORD PTR ds:0x231f74,edx
+100951 ret
+10095e mov    eax,eax

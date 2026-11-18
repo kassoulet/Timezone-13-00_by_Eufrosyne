@@ -1,0 +1,40 @@
+// Global fade/flash level ([0x231f74], "edi" of the timer callback 0x100370) as a function of music time.
+// The original runs this state machine once per PIT tick (TICK Hz); it polls the S3M (order,row) and fires the events below once per row;
+// W (MIDAS sync) commands flash the level by +-0x80/+-0x40 while no fade is active. Palette uploaded each tick: DAC = clamp(pal + level, 0..255) >> 2.
+import { SYNC } from './sync.js';
+export const TICK = 1193182 / 16951;                     // PIT ticks/s: MIDAS programs reload 16951 (70.39 Hz, measured in the harness)
+const ROW = 6 * 2.5 / 144, ORD = 64 * ROW;
+const E1 = {  // AUMAX: 'order,row' -> [cmd, resetToBlack]   cmd 0 hold/decay +-4, 1 in +2 (then 0), 2 out -2, 3 out -8, 4 out -1, 5 in +1
+  '0,58': [1, 1], '1,58': [2, 0], '2,12': [1, 1], '7,40': [2, 0], '8,0': [0, 0], '11,58': [3, 0], '12,0': [1, 1], '15,58': [3, 0], '16,0': [1, 1], '19,58': [3, 0],
+  '20,0': [1, 1], '25,40': [2, 0], '26,0': [0, 1], '30,26': [3, 0], '30,32': [1, 1], '33,32': [4, 0] };
+const E2 = { '0,0': [1, 1], '3,0': [4, 0] };            // PILIPS
+function build(E, dur, sync, edi0, cmd0) {
+  const n = Math.ceil(dur * TICK) + 1, out = new Int16Array(n);
+  const sy = sync.map(([o, r, i]) => [o * ORD + r * ROW, i]).sort((a, b) => a[0] - b[0]); let si = 0;
+  let cmd = cmd0, edi = edi0, last = '';   // both effects start black (edi -256) as set by the first scene's init
+  for (let k = 0; k < n; k++) {
+    const t = k / TICK, o = Math.floor(t / ORD), r = Math.floor((t - o * ORD) / ROW), key = o + ',' + r;
+    if (E[key] && key !== last) { const [c, rst] = E[key]; if (rst) edi = -256; cmd = c; last = key; }
+    while (si < sy.length && sy[si][0] <= t) { const i = sy[si++][1]; if (cmd === 0) edi = i === 16 ? 128 : i === 17 ? -128 : i === 18 ? 64 : i === 19 ? -64 : edi; }
+    if (cmd === 0) { if (edi < 0) edi += 4; if (edi > 0) edi -= 4; }
+    if (cmd === 1) { edi += 2; if (edi > 0) { edi = 0; cmd = 0; } }
+    if (cmd === 2) edi = Math.max(-256, edi - 2);
+    if (cmd === 3) edi = Math.max(-256, edi - 8);
+    if (cmd === 4) edi = Math.max(-256, edi - 1);
+    if (cmd === 5) { edi++; if (edi > 0) { edi = 0; cmd = 0; } }
+    out[k] = edi;
+  }
+  return out;
+}
+let F1, F2;
+/** fade level at module time t (module 1 = AUMAX, 2 = PILIPS) */
+export function level(mod, t) {
+  F1 ??= build(E1, 240, SYNC, -256, 2); F2 ??= build(E2, 40, [], -256, 1);
+  const F = mod === 1 ? F1 : F2, k = Math.max(0, Math.min(F.length - 1, Math.floor(t * TICK)));
+  return F[k];
+}
+/** 768-byte 8-bit RGB palette shown for source palette pal (8-bit values as stored in memory) and fade level */
+export function dac(pal, lv, out = new Uint8Array(768)) {
+  for (let i = 0; i < 768; i++) { const v = Math.min(255, Math.max(0, pal[i] + lv)) >> 2; out[i] = v << 2 | v >> 4; }
+  return out;
+}
