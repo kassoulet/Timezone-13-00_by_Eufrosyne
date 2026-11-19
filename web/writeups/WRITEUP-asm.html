@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Time Zone +13:00 (Eufrosyne, 1997) - asm snippets worth
+reading</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+  :root{--bg:#fff;--fg:#1d1d22;--mut:#666;--ac:#c4155a;--code:#f3f3f6;--bd:#d8d8e0}
+  @media (prefers-color-scheme:dark){:root{--bg:#0b0b10;--fg:#d8d8e0;--mut:#9a9aa8;--ac:#ff6a9a;--code:#17171f;--bd:#33333f}}
+  *{box-sizing:border-box}
+  body{margin:0 auto;max-width:62rem;padding:0 16px;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,sans-serif}
+  #wunav{display:flex;gap:16px;flex-wrap:wrap;padding-top:12px;padding-bottom:8px;border-bottom:1px solid var(--bd);font-size:14px}
+  a{color:var(--ac)}
+  h1,h2,h3,h4{line-height:1.25;margin-top:1.8em}
+  img{max-width:100%;height:auto;image-rendering:auto}
+  pre{background:var(--code);border:1px solid var(--bd);border-radius:4px;padding:10px 12px;overflow-x:auto;font-size:13px;line-height:1.4}
+  code{background:var(--code);padding:1px 4px;border-radius:3px;font-size:.92em;overflow-wrap:anywhere}
+  pre code{background:none;padding:0;overflow-wrap:normal}
+  table{border-collapse:collapse;display:block;overflow-x:auto;max-width:100%}
+  td,th{border:1px solid var(--bd);padding:4px 8px}
+  blockquote{border-left:3px solid var(--bd);margin-left:0;padding-left:14px;color:var(--mut)}
+  #TOC{font-size:14px}#TOC ul{padding-left:1.2em}
+  #TOC>ul{padding-left:0;list-style:none}
+  details#toc-box{margin:12px 0}
+  </style>
+</head>
+<body>
+<nav id="wunav"><a href="../index.html">&larr; the demo</a> <a href="WRITEUP-asm.html">asm</a> <a href="WRITEUP-effects.html">effects</a> <a href="https://github.com/kassoulet/Timezone-13-00_by_Eufrosyne">README on GitHub</a></nav>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a
+href="#time-zone-1300-eufrosyne-1997---asm-snippets-worth-reading"
+id="toc-time-zone-1300-eufrosyne-1997---asm-snippets-worth-reading">Time
+Zone +13:00 (Eufrosyne, 1997) - asm snippets worth reading</a>
+<ul>
+<li><a
+href="#1-signed-x--k-that-rounds-toward-zero-in-four-instructions-0x1020eb"
+id="toc-1-signed-x--k-that-rounds-toward-zero-in-four-instructions-0x1020eb">1.
+Signed <code>x &gt;&gt; k</code> that rounds toward zero in four
+instructions (<code>0x1020eb</code>)</a></li>
+<li><a
+href="#2-triangle-dispatcher-count-the-out-of-range-vertices-pick-the-fast-path-0x1036ff"
+id="toc-2-triangle-dispatcher-count-the-out-of-range-vertices-pick-the-fast-path-0x1036ff">2.
+Triangle dispatcher: count the out-of-range vertices, pick the fast path
+(<code>0x1036ff</code>)</a></li>
+<li><a href="#3-the-middle-vertex-by-index-arithmetic-0x10318b"
+id="toc-3-the-middle-vertex-by-index-arithmetic-0x10318b">3. The middle
+vertex by index arithmetic (<code>0x10318b</code>)</a></li>
+<li><a
+href="#4-triangle-edges-in-1616-and-a-span-loop-with-a-self-modified-row-pointer-0x1032000x103355-span-0x103156"
+id="toc-4-triangle-edges-in-1616-and-a-span-loop-with-a-self-modified-row-pointer-0x1032000x103355-span-0x103156">4.
+Triangle edges in 16.16 and a span loop with a self-modified row pointer
+(<code>0x103200..0x103355</code>, span <code>0x103156</code>)</a></li>
+<li><a href="#5-scaled-additive-glow-with-a-two-dda-inner-loop-0x107937"
+id="toc-5-scaled-additive-glow-with-a-two-dda-inner-loop-0x107937">5.
+Scaled additive glow with a two-DDA inner loop
+(<code>0x107937</code>)</a></li>
+<li><a
+href="#6-16x16-spots-from-the-same-sprite-sampled-every-8th-texel-0x1077dc-0x107889"
+id="toc-6-16x16-spots-from-the-same-sprite-sampled-every-8th-texel-0x1077dc-0x107889">6.
+16x16 spots from the same sprite, sampled every 8th texel
+(<code>0x1077dc</code>, <code>0x107889</code>)</a></li>
+<li><a
+href="#7-a-1-bit-per-pass-radix-sort-over-32-bits-with-the-key-address-patched-in-0x107a78"
+id="toc-7-a-1-bit-per-pass-radix-sort-over-32-bits-with-the-key-address-patched-in-0x107a78">7.
+A 1-bit-per-pass radix sort over 32 bits, with the key address patched
+in (<code>0x107a78</code>)</a></li>
+<li><a
+href="#8-the-sine-table-a-c-library-loop-with-the-authors-pi-0x102570"
+id="toc-8-the-sine-table-a-c-library-loop-with-the-authors-pi-0x102570">8.
+The sine table: a C-library loop with the author's pi
+(<code>0x102570</code>)</a></li>
+<li><a
+href="#9-polar-lookup-with-the-angle-wrap-for-free-0x107cb4-and-the-tables-behind-it-0x107ce0"
+id="toc-9-polar-lookup-with-the-angle-wrap-for-free-0x107cb4-and-the-tables-behind-it-0x107ce0">9.
+Polar lookup with the angle wrap for free (<code>0x107cb4</code>) and
+the tables behind it (<code>0x107ce0</code>)</a></li>
+<li><a
+href="#10-a-column-painter-with-a-running-occlusion-limit-0x107bc8"
+id="toc-10-a-column-painter-with-a-running-occlusion-limit-0x107bc8">10.
+A column painter with a running occlusion limit
+(<code>0x107bc8</code>)</a></li>
+<li><a
+href="#11-the-landscape-painter-increments-patched-into-the-code-and-increments-that-patch-each-other-0x108d78"
+id="toc-11-the-landscape-painter-increments-patched-into-the-code-and-increments-that-patch-each-other-0x108d78">11.
+The landscape painter: increments patched into the code, and increments
+that patch each other (<code>0x108d78</code>)</a></li>
+<li><a
+href="#12-particle-physics-in-the-unused-rotation-fields-0x1028b0"
+id="toc-12-particle-physics-in-the-unused-rotation-fields-0x1028b0">12.
+Particle physics in the unused rotation fields
+(<code>0x1028b0</code>)</a></li>
+<li><a
+href="#13-one-palette-add-for-fades-flashes-and-beats-one-state-machine-in-the-timer-interrupt-0x100a00-0x100370-0x100910"
+id="toc-13-one-palette-add-for-fades-flashes-and-beats-one-state-machine-in-the-timer-interrupt-0x100a00-0x100370-0x100910">13.
+One palette add for fades, flashes and beats; one state machine in the
+timer interrupt (<code>0x100a00</code>, <code>0x100370</code>,
+<code>0x100910</code>)</a></li>
+<li><a
+href="#14-blur-straight-to-the-screen-four-neighbours-one-divide-by-4-0x1030a0"
+id="toc-14-blur-straight-to-the-screen-four-neighbours-one-divide-by-4-0x1030a0">14.
+Blur straight to the screen: four neighbours, one divide-by-4
+(<code>0x1030a0</code>)</a></li>
+<li><a
+href="#15-noise-from-a-chain-of-accumulators-no-table-and-no-rand-per-pixel-0x109940"
+id="toc-15-noise-from-a-chain-of-accumulators-no-table-and-no-rand-per-pixel-0x109940">15.
+Noise from a chain of accumulators, no table and no <code>rand()</code>
+per pixel (<code>0x109940</code>)</a></li>
+<li><a href="#how-the-excerpts-were-verified"
+id="toc-how-the-excerpts-were-verified">How the excerpts were
+verified</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="time-zone-1300-eufrosyne-1997---asm-snippets-worth-reading">Time
+Zone +13:00 (Eufrosyne, 1997) - asm snippets worth reading</h1>
+<p>All addresses are linear addresses of obj1 (code) as loaded by
+<code>re/le.py</code> at <code>0x100000</code> (data object at
+<code>0x200000</code>). <code>TZ1300.EXE</code> is an MZ stub + PMODE/W
+1.32 + an <strong>uncompressed</strong> LE image, so no unpacking is
+needed. Listings are
+<code>objdump -D -b binary -mi386 -M intel --adjust-vma=0x100000</code>
+of <code>re/obj1.bin</code> (<code>re/dis.sh</code>) started at the
+first address of each excerpt (the instruction bytes are dropped,
+<code>;</code> comments are mine). Every excerpt was re-checked
+mechanically against a fresh disassembly of the binary by a script
+(<code>tools/check_writeup_asm.py</code>) that compares the address and
+instruction text of every listing line (see the end of the file); the
+JavaScript is the port in <code>web/fx/</code>. The code is a mix of
+<strong>Watcom C</strong> (the glue, the scene drivers, the compiler
+idioms that show up everywhere) and <strong>hand-written asm</strong>
+(rasterisers, painters, sort) that is full of <strong>self-modifying
+code</strong>: the code object is writable, and several loops live next
+to the variables they patch (<code>0x1030fc..0x1037d8</code> are
+variables <em>inside the code object</em>; the 128x128 glow sprite sits
+right behind them at <code>0x1037dc</code>).</p>
+<hr />
+<h2
+id="1-signed-x--k-that-rounds-toward-zero-in-four-instructions-0x1020eb">1.
+Signed <code>x &gt;&gt; k</code> that rounds toward zero in four
+instructions (<code>0x1020eb</code>)</h2>
+<p>Every fixed-point product of the engine is shifted back down with the
+same four instructions (hundreds of copies; here the first rotation of
+the point transform, <code>0x102060</code>):</p>
+<pre><code>1020e3: mov edx,DWORD PTR [esp+0x24]
+1020e7: sub edx,eax
+1020e9: mov eax,edx
+1020eb: sar edx,0x1f           ; edx = 0 or -1 (sign mask)
+1020ee: shl edx,0xf            ; edx = 0 or 0xffff8000, and CF = 1 exactly when edx was -1
+1020f1: sbb eax,edx            ; eax - edx - CF = eax + 0x7fff for negative eax, eax for positive
+1020f3: sar eax,0xf            ; arithmetic shift of the biased value = truncation toward zero</code></pre>
+<p><code>sar</code> alone rounds toward minus infinity; C's
+<code>/ 32768</code> rounds toward zero, which is what the compiler must
+produce. A bias of <code>2^k - 1</code> for negative values fixes it,
+and the usual way is a branch or <code>cdq; and; add</code>. Here the
+<code>shl</code> of the sign mask is used for <em>both</em> jobs: its
+result is the bias half (<code>0xffff8000</code>) and its
+<strong>carry-out</strong> (bit 17 of <code>-1</code> shifted out) is
+the missing <code>+1</code> that <code>sbb</code> subtracts, so
+<code>eax - 0xffff8000 - 1 = eax + 0x7fff</code>. Branch-free, no
+<code>and</code>. This is a Watcom idiom (it is in every
+<code>&gt;&gt; k</code> of the C code, e.g. <code>shl edx,0x7</code>,
+<code>0x9</code> in the scene 5 physics), but it explains why a port
+<strong>must not use <code>&gt;&gt;</code> on signed values</strong>:
+the port's helper is</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> tr <span class="op">=</span> (v<span class="op">,</span> k) <span class="kw">=&gt;</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">trunc</span>(v <span class="op">/</span> (<span class="dv">1</span> <span class="op">&lt;&lt;</span> k))<span class="op">;</span>        <span class="co">// web/fx/engine3d.js: x &gt;&gt; k toward zero</span></span></code></pre></div>
+<p>The projection that follows uses the same idiom for the depth
+(<code>(z &lt;&lt; 12) / 256</code>), then one <code>idiv</code> per
+axis:</p>
+<pre><code>1021c9: shl eax,0xc
+1021cc: mov edx,eax
+1021ce: sar edx,0x1f
+1021d1: shl edx,0x8
+1021d4: sbb eax,edx
+1021d6: sar eax,0x8            ; depth d = (z &lt;&lt; 12) &gt;&gt; 8, truncating
+1021d9: mov ebx,eax
+1021db: test eax,eax
+1021dd: jle 0x102200           ; behind the camera: no projection
+1021df: mov edx,esi
+1021e1: shl edx,0xc
+1021e4: mov eax,edx
+1021e6: sar edx,0x1f
+1021e9: idiv ebx               ; x &lt;&lt; 12 / d
+1021eb: mov edx,ecx
+1021ed: lea esi,[eax+0xa0]     ; + 160
+1021f3: shl edx,0xc
+1021f6: mov eax,edx
+1021f8: sar edx,0x1f
+1021fb: idiv ebx
+1021fd: lea ecx,[eax+0x64]     ; + 100</code></pre>
+<p><code>lea reg,[reg+imm]</code> is used as a non-flag-touching
+3-operand add for the screen centre. JS: <code>point()</code> in
+<code>engine3d.js</code>
+(<code>d = tr((z3 &lt;&lt; 12) | 0, 8); px = idiv((x3 &lt;&lt; 12) | 0, d) + 0xa0</code>;
+the <code>| 0</code> reproduces the 32-bit wrap of
+<code>shl</code>).</p>
+<hr />
+<h2
+id="2-triangle-dispatcher-count-the-out-of-range-vertices-pick-the-fast-path-0x1036ff">2.
+Triangle dispatcher: count the out-of-range vertices, pick the fast path
+(<code>0x1036ff</code>)</h2>
+<p>The flat-triangle entry copies the six coordinates and the shade into
+the variables inside the code object, then decides <strong>once per
+triangle</strong> whether any clipping is needed. Two counters,
+<code>ecx</code> (too small) and <code>edx</code> (too large), are
+bumped branch-free with <code>jge/jl</code> over a single
+<code>inc</code>, for the three x values and then the three y
+values:</p>
+<pre><code>103739: xor ecx,ecx
+10373b: xor edx,edx
+10373d: mov eax,ds:0x1030fc    ; x1
+103742: cmp eax,0x2
+103745: jge 0x103748
+103747: inc ecx                ; x1 &lt; 2
+103748: cmp eax,0x140
+10374d: jl 0x103750
+10374f: inc edx                ; x1 &gt;= 320
+103750: mov eax,ds:0x103100    ; x2 ... (same pattern for x2, x3, then y1..y3 against 1..199)
+103776: test ecx,ecx
+103778: jne 0x1037c7           ; any vertex outside: slow, per-pixel-clipped rasteriser (0x1033c3)
+10377a: test edx,edx
+10377c: jne 0x1037c7</code></pre>
+<pre><code>1037b8: test ecx,ecx
+1037ba: jne 0x1037c7
+1037bc: test edx,edx
+1037be: jne 0x1037c7
+1037c0: call 0x103154          ; all inside: the fast path, no clip tests at all
+1037c5: jmp 0x1037cc
+1037c7: call 0x1033c3</code></pre>
+<p>The fast path is therefore allowed to be completely unchecked (see
+section 4: no bounds test in its inner loop), and the margin is chosen
+to make that safe: x must be in <code>[2, 319]</code> and y in
+<code>[1, 199]</code>, so a span can never touch the borders (the slope
+rounding can overshoot a pixel). JS: <code>tri()</code> in
+<code>engine3d.js</code> has the same <code>fast</code> test
+(<code>xs.every(x =&gt; x &gt;= 2 &amp;&amp; x &lt; 320) &amp;&amp; ys.every(y =&gt; y &gt; 0 &amp;&amp; y &lt; 200)</code>)
+and a per-pixel clipped branch.</p>
+<hr />
+<h2 id="3-the-middle-vertex-by-index-arithmetic-0x10318b">3. The middle
+vertex by index arithmetic (<code>0x10318b</code>)</h2>
+<p>The rasteriser needs the three vertices ordered by y. It never sorts:
+it finds the <strong>top</strong> and the <strong>bottom</strong> index
+with two comparison chains and obtains the <strong>middle</strong> one
+as <code>12 - top - bottom</code>, because the byte offsets of the three
+vertices are <code>0, 4, 8</code> (x at <code>0x1030fc + i*4</code>, y
+at <code>0x103108 + i*4</code>) and <code>0 + 4 + 8 = 12</code>:</p>
+<pre><code>10318b: mov ecx,0xc
+103190: mov eax,ds:0x103108
+103195: xor ebx,ebx            ; ebx = offset of the topmost vertex (smallest y), starts at vertex 0
+103197: cmp eax,DWORD PTR ds:0x10310c
+10319d: jl 0x1031a9
+10319f: mov eax,ds:0x10310c
+1031a4: mov ebx,0x4
+1031a9: cmp eax,DWORD PTR ds:0x103110
+1031af: jl 0x1031b6
+1031b1: mov ebx,0x8
+1031b6: mov eax,ds:0x103108
+1031bb: sub ecx,ebx            ; ecx = 12 - top
+1031bd: xor edx,edx            ; edx = offset of the bottommost vertex (same chain with jg)
+1031bf: cmp eax,DWORD PTR ds:0x10310c
+1031c5: jg 0x1031d1
+1031c7: mov eax,ds:0x10310c
+1031cc: mov edx,0x4
+1031d1: cmp eax,DWORD PTR ds:0x103110
+1031d7: jg 0x1031de
+1031d9: mov edx,0x8
+1031de: sub ecx,edx            ; ecx = 12 - top - bottom = the middle vertex
+1031e0: mov eax,DWORD PTR [ebx+0x1030fc]</code></pre>
+<p>Six compares, no swaps, no temporary copy of three vertices. Both
+chains keep the earlier vertex only when it is strictly better, so ties
+go to the later vertex, which matters for bit-exactness. JS:
+<code>let b = 0, m = ys[0]; ... const md = 3 - b - d</code> in
+<code>tri()</code> (indices 0,1,2: <code>3 = 0+1+2</code>).</p>
+<hr />
+<h2
+id="4-triangle-edges-in-1616-and-a-span-loop-with-a-self-modified-row-pointer-0x1032000x103355-span-0x103156">4.
+Triangle edges in 16.16 and a span loop with a self-modified row pointer
+(<code>0x103200..0x103355</code>, span <code>0x103156</code>)</h2>
+<p><strong>Edge slopes</strong> are 16.16 <code>idiv</code>s of
+<code>dx &lt;&lt; 16</code> by <code>dy</code>, with <code>dy = 0</code>
+replaced by 1 so there is no division fault and no test elsewhere:</p>
+<pre><code>103237: mov eax,ds:0x10311c
+10323c: mov ebx,DWORD PTR ds:0x103128
+103242: sub eax,DWORD PTR ds:0x103118
+103248: sub ebx,DWORD PTR ds:0x103124
+10324e: shl eax,0x10           ; dx &lt;&lt; 16
+103251: test ebx,ebx
+103253: jne 0x10325a
+103255: mov ebx,0x1           ; dy == 0 -&gt; 1
+10325a: cdq
+10325b: idiv ebx
+10325d: mov ecx,eax            ; slope top -&gt; middle</code></pre>
+<p>The same is done for top -&gt; bottom (<code>ebp</code>, and
+<code>edi = -ebp</code>) and middle -&gt; bottom (<code>esi</code>).
+Then the triangle is drawn in <strong>two phases that share one
+routine</strong>. Instead of keeping a left and a right edge per
+scanline, the span is described by its <strong>right end</strong>
+(<code>edi</code>, 16.16 offset from the start vertex) and its
+<strong>negative width</strong> (<code>ebx</code>, starts at
+<code>-1.0</code>), each updated with one addition per scanline. The
+patched immediates are the slopes, the row pointer and the row step
+(<code>+320</code> going down in phase 1, <code>-320</code> =
+<code>0xfffffec0</code> going up in phase 2):</p>
+<pre><code>103156: mov esi,edi
+103158: mov ebp,ebx
+10315a: sar esi,0x10
+10315d: sar ebp,0x10           ; ebp = -width (pixels), negative
+103160: add esi,0x12345678     ; the immediate (0x103162) is the current row pointer: patched below
+103166: mov BYTE PTR [esi+ebp*1],al   ; al = shade
+103169: inc ebp
+10316a: jne 0x103166           ; the loop counter IS the pixel offset: counts up to 0, 3 instructions per pixel
+10316c: add DWORD PTR ds:0x103162,0x12345678   ; row pointer += row step (immediate 0x103172, patched to +-320)
+103176: add edi,0x12345678     ; right end += slope A (immediate 0x103178)
+10317c: add ebx,0x12345678     ; width += slope B (immediate 0x10317e)
+103182: dec DWORD PTR ds:0x103148     ; line counter lives in the code object
+103188: jne 0x103156
+10318a: ret</code></pre>
+<pre><code>103326: mov ds:0x103148,eax    ; number of lines
+10332b: mov eax,ds:0x103138
+103330: mov ds:0x103178,eax    ; patch slope A
+103335: mov eax,ds:0x103140
+10333a: mov ds:0x10317e,eax    ; patch slope B
+10333f: mov DWORD PTR ds:0x103172,0x140   ; phase 1 goes down: row step +320
+103349: mov ebx,0xffff0000     ; width = -1.0 (16.16)
+10334e: xor edi,edi
+103350: mov eax,ds:0x103114    ; shade
+103355: call 0x103156</code></pre>
+<p>Why it is nice: the inner loop has <strong>no pointer arithmetic and
+no end-of-span compare</strong> (<code>inc ebp / jne</code> is both the
+address increment and the termination test), the row pointer is an
+immediate rather than a register or memory operand, and with the
+two-addition edge update a scanline costs about a dozen instructions of
+overhead. The price is a code object that must be writable, and the span
+writes go right-to-left from the right end. JS (<code>tri()</code> in
+<code>engine3d.js</code>):
+<code>run(base, y0, x0, lines, dy, A, B)</code> keeps
+<code>ebx = -65536</code>, <code>edi = 0</code>, writes
+<code>for (k = w; k &lt; 0; k++) buf[base + r + k] = shade</code> and
+does <code>edi += A; ebx += B</code> per line.</p>
+<hr />
+<h2 id="5-scaled-additive-glow-with-a-two-dda-inner-loop-0x107937">5.
+Scaled additive glow with a two-DDA inner loop
+(<code>0x107937</code>)</h2>
+<p>The type-5 particles are a 128x128 sprite stretched to
+<code>size x size</code> (size 16..255 from the depth) and
+<strong>added</strong> to the frame. The step is
+<code>0x800000 / size</code> (a 16.16 step of <code>128 / size</code>,
+computed once per sprite), the position in the sprite is the high half
+of a 16.16 accumulator per axis, and the clip window is patched into the
+loop as immediates (the immediates at <code>0x1079c9</code>,
+<code>0x1079fd</code>, <code>0x107a4e</code>, <code>0x107a5d</code> are
+the first row, first column, end column and end row):</p>
+<pre><code>10798f: mov eax,0x800000
+107994: cdq
+107995: mov ebx,DWORD PTR ds:0x1037d8   ; size
+10799b: idiv ebx                        ; step = 0x800000 / size (16.16 texels per pixel = 128/size)
+10799d: mov ds:0x107a47,eax             ; patched into &#39;add ebx,imm&#39; below</code></pre>
+<pre><code>107a01: test edi,edi
+107a03: jl 0x107a45             ; x &lt; 0 -&gt; skip the pixel (x counter edi starts at x0, patched at 0x1079fc)
+107a05: cmp edi,0x13f
+107a0b: jg 0x107a45             ; x &gt; 319
+107a0d: mov eax,ebx
+107a0f: sar eax,0x10            ; sprite column = high half of the accumulator
+107a12: add eax,0x12345678      ; + row base (patched with sprite + (row &lt;&lt; 7) at 0x107a13, set per scanline at 0x1079f5)
+107a17: mov ebp,edi
+107a19: add ebp,0x12345678      ; + screen row base (patched at 0x107a1b: y*320)
+107a1f: mov al,BYTE PTR [eax]   ; texel
+107a21: and eax,0xff
+107a26: xor edx,edx
+107a28: mov dl,BYTE PTR [ebp+0x12345678]   ; frame buffer pixel (immediate = buffer base)
+107a2e: shl eax,0x2             ; sprite * 4 ...
+107a31: add eax,edx             ; ... + destination
+107a33: cmp eax,0xc0
+107a38: jl 0x107a3f
+107a3a: mov eax,0xbf            ; saturate at 0xbf, not 0xff
+107a3f: mov BYTE PTR [ebp+0x12345678],al
+107a45: add ebx,0x12345678      ; column accumulator += step
+107a4b: inc edi
+107a4c: cmp edi,0x12345678      ; x end (x0 + size)
+107a52: jl 0x107a01</code></pre>
+<p>The saturation value <code>0xbf</code> is not arbitrary: the colour
+ramp (DAT image 12) only has 192 useful entries and the upper 64 are the
+overlay colours of scenes 2, 4, 6 (<code>+0xc0</code>); additive
+blending can therefore never stray into them. With <code>src * 4</code>
+and a sprite that peaks near <code>0x30</code>, many overlapping glows
+burn out to the top of the ramp (the white blooms of scene 1/7). All of
+<code>x0, y0, x1, y1, step, row bases</code> are immediates written once
+per sprite, so the per-pixel work is a handful of instructions and no
+register holds loop-invariant addresses. JS: <code>glow()</code> in
+<code>engine3d.js</code>
+(<code>const v = sprite[row + (bx &gt;&gt; 16)] * 4 + buf[...]; buf[...] = v &lt; 0xc0 ? v : 0xbf</code>).</p>
+<hr />
+<h2
+id="6-16x16-spots-from-the-same-sprite-sampled-every-8th-texel-0x1077dc-0x107889">6.
+16x16 spots from the same sprite, sampled every 8th texel
+(<code>0x1077dc</code>, <code>0x107889</code>)</h2>
+<p>The fixed-size points (types 2/3 and 4/9) reuse the glow sprite
+instead of having their own bitmap: a 16x16 box reads <strong>every 8th
+texel of every 8th row</strong>, advancing the sprite pointer by 8 per
+pixel and by <code>0x380</code> after each row of 16
+(<code>16 * 8 + 0x380 = 0x400</code> = 8 sprite rows of 128):</p>
+<pre><code>107841: xor eax,eax
+107843: mov al,BYTE PTR [ebp+0x0]   ; sprite texel (ebp walks the sprite)
+107846: and eax,0xff
+10784b: shl eax,1                   ; x2 (0x107889: shl eax,0x3 = x8)
+10784d: sub eax,DWORD PTR ds:0x1037d8   ; - size: the spot dims with distance
+107853: test eax,eax
+107855: jg 0x107859
+107857: xor eax,eax                 ; clamp at 0
+107859: xor edx,edx
+10785b: mov dl,BYTE PTR [esi]
+10785d: add eax,edx                 ; + destination
+10785f: cmp eax,0xc0
+107864: jl 0x10786b
+107866: mov eax,0xbf
+10786b: mov BYTE PTR [esi],al
+10786d: inc ebx
+10786e: inc esi
+10786f: add ebp,0x8                 ; next sampled texel: 8 to the right
+107872: dec ch
+107874: jne 0x107829
+107876: inc edi
+107877: add esi,0x130               ; next screen row (320 - 16)
+10787d: add ebp,0x380               ; + 7 more sprite rows (16*8 + 0x380 = 0x400)
+107883: dec cl
+107885: jne 0x107821</code></pre>
+<p>One 128x128 bitmap does two jobs, a big soft glow and (by decimation)
+a crisp small dot, and the type-7 variant gets a depth fade for free
+with one <code>sub</code> of the entry's size. The border test of the
+box
+(<code>test ebx,ebx / cmp ebx,0x13f / test edi,edi / cmp edi,0xc7</code>)
+is per pixel. JS: <code>spot(buf, e, sprite, mul)</code> with
+<code>sprite[j * 1024 + i * 8] * mul - e.p</code>.</p>
+<hr />
+<h2
+id="7-a-1-bit-per-pass-radix-sort-over-32-bits-with-the-key-address-patched-in-0x107a78">7.
+A 1-bit-per-pass radix sort over 32 bits, with the key address patched
+in (<code>0x107a78</code>)</h2>
+<p>The render list is sorted by depth key (entry offset
+<code>+0x18</code>) every frame. The sort works on an <strong>array of
+entry offsets</strong>, not on the 64-byte entries, and does an LSD
+radix sort with <strong>radix 2</strong>: 32 passes, each splitting the
+current order into a <em>zero</em> list and a <em>one</em> list by
+<code>bt eax,edx</code> (<code>edx</code> = pass number). The input of
+the next pass is <em>read as the zero list followed by the one
+list</em>, which is exactly the stable order, so no merge/copy loop
+exists between passes (only a copy-down of the two new buckets):</p>
+<pre><code>107aa2: mov eax,0x235e58
+107aa7: add eax,0x18
+107aaa: mov ds:0x107acf,eax        ; patch the displacement of &#39;mov eax,[ebx+imm]&#39; below with entries + 0x18
+107aaf: mov ds:0x107b03,eax        ; ... and its twin in the second loop
+107ab4: xor edx,edx                ; edx = bit number
+107ab6: xor esi,esi                ; esi = zero bucket count
+107ab8: xor ebp,ebp                ; ebp = one bucket count
+107aba: mov ecx,DWORD PTR ds:0x107a6c
+107ac0: test ecx,ecx
+107ac2: je 0x107aee
+107ac4: xor edi,edi
+107ac6: mov ebx,DWORD PTR [edi*4+0x255258]   ; entry offset from list A (the previous zeros)
+107acd: mov eax,DWORD PTR [ebx+0x12345678]   ; its key
+107ad3: bt eax,edx
+107ad6: jb 0x107ae2
+107ad8: mov DWORD PTR [esi*4+0x2590d8],ebx   ; bit 0 -&gt; zero bucket
+107adf: inc esi
+107ae0: jmp 0x107aea
+107ae2: mov DWORD PTR [ebp*4+0x233f18],ebx   ; bit 1 -&gt; one bucket
+107ae9: inc ebp
+107aea: inc edi
+107aeb: dec ecx
+107aec: jne 0x107ac6</code></pre>
+<p>The second loop (<code>0x107af8..0x107b20</code>) does the same for
+list B (the previous ones). After 32 passes the result is written
+<strong>reversed</strong> (far first) while converting offsets back to
+entry numbers with <code>sar 6</code>:</p>
+<pre><code>107b62: xor edi,edi
+107b64: mov esi,DWORD PTR ds:0x107a74    ; total count
+107b6a: shl esi,0x2
+107b6d: sub esi,0x4                      ; write from the last slot downwards
+107b70: mov ecx,DWORD PTR ds:0x107a6c
+107b76: test ecx,ecx
+107b78: je 0x107b92
+107b7a: mov eax,DWORD PTR [edi+0x255258]
+107b80: sar eax,0x6                      ; entry offset / 64 = entry number
+107b83: mov DWORD PTR [esi+0x257198],eax
+107b89: add edi,0x4
+107b8c: sub esi,0x4</code></pre>
+<p>Why it is clever (and why it is fine): the whole key is sorted
+without knowing its range or its signedness (a sum of three depths up to
+a few million is just 32 bits to it), there is no 256/65536-entry
+counter table to clear and prefix-sum (which, for a few hundred entries
+per frame, would cost more than it saves), and the pass body is just
+<code>bt</code> and a conditional store. Stability gives deterministic
+ties: <strong>equal keys end up in reverse entry order</strong> after
+the final reversal, and the port has to reproduce that to be bit-exact.
+JS (<code>order()</code> in <code>engine3d.js</code>):
+<code>idx.sort((p, q) =&gt; (list[q].key &gt;&gt;&gt; 0) - (list[p].key &gt;&gt;&gt; 0) || (q - p))</code>.
+An engine sort is equivalent <em>because</em> the original is a stable
+ascending sort followed by a reversal.</p>
+<hr />
+<h2
+id="8-the-sine-table-a-c-library-loop-with-the-authors-pi-0x102570">8.
+The sine table: a C-library loop with the author's pi
+(<code>0x102570</code>)</h2>
+<pre><code>1025e0: mov ecx,0x40e00000     ; high word of the double 32768.0
+1025e5: mov eax,esi            ; eax:edx = a (double)
+1025e7: mov edx,edi
+1025e9: xor ebx,ebx
+1025eb: call 0x10ec4b          ; Watcom runtime: sin(a) (x87 via 0x1143fd, or the software fallback 0x10ea06)
+1025f0: call 0x10ee77          ; * 32768.0
+1025f5: call 0x10f01c          ; double -&gt; int, truncating
+1025fa: mov ecx,0x40e00000
+1025ff: mov edx,edi
+102601: mov DWORD PTR [ebp+0x333210],eax    ; SIN[i]
+...
+10261a: mov ebx,0x54524552
+10261f: mov ecx,0x3f5921fb     ; a += 0x3f5921fb54524552
+102624: mov edx,edi
+102626: mov DWORD PTR [ebp+0x300110],eax    ; COS[i] (the second call at 0x10260b is the cosine helper 0x10ec72)
+10262c: mov eax,esi
+10262e: add ebp,0x4
+102631: call 0x10ecc0          ; add double
+102636: mov esi,eax
+102638: mov edi,edx
+10263a: cmp ebp,0x4000         ; 4096 entries</code></pre>
+<p>Not an optimisation, but two details a port must copy: the values are
+<strong>truncated</strong> (not rounded) after <code>* 32768</code>, and
+<strong>the step is not exactly <code>2*pi/4096</code></strong>: the
+immediate <code>0x3f5921fb54524552</code> is
+<code>0.001533980788085938 = 3.141592654 / 2048</code> (the author typed
+pi with ten digits). The accumulated angle ends 8.2e-10 rad off the
+ideal after 4096 steps, which changes no entry (0 of 4096 sine and 0 of
+4096 cosine values differ from a table built with
+<code>2*pi/4096</code>; checked), so here the constant is harmless. The
+table is built with <code>Math.sin</code>/<code>Math.cos</code> in
+<code>engine3d.js</code> and compared with the table of the emulator
+(<code>tools/checksin.mjs</code>, <code>re/mk_sincos.py</code>):
+identical. (The helper identities - sin at <code>0x10ec4b</code>, cos at
+<code>0x10ec72</code> - are inferred from the constant and the table
+they produce, which matches <code>Math.sin</code>/<code>Math.cos</code>
+exactly; the helpers choose x87 or a software path at run time by the
+byte at <code>0x231961</code>.)</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode js"><code class="sourceCode javascript"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> a <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> <span class="dv">4096</span><span class="op">;</span> i<span class="op">++,</span> a <span class="op">+=</span> <span class="fl">0.001533980788085938</span>) { SIN[i] <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">trunc</span>(<span class="bu">Math</span><span class="op">.</span><span class="fu">sin</span>(a) <span class="op">*</span> <span class="dv">32768</span>)<span class="op">;</span> COS[i] <span class="op">=</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">trunc</span>(<span class="bu">Math</span><span class="op">.</span><span class="fu">cos</span>(a) <span class="op">*</span> <span class="dv">32768</span>)<span class="op">;</span> }</span></code></pre></div>
+<p>The same author's-constants theme appears in the landscape table
+builder <code>0x108100</code> (<code>0x3fe973e6d970fda2</code> =
+0.7953981635 start angle, <code>0x3f741b2f76a83773</code> =
+0.004908738521875 = 3.141592654/640 step, <code>0x40f00000</code> =
+65536.0) and in the <code>atan2</code> table of section 9.</p>
+<hr />
+<h2
+id="9-polar-lookup-with-the-angle-wrap-for-free-0x107cb4-and-the-tables-behind-it-0x107ce0">9.
+Polar lookup with the angle wrap for free (<code>0x107cb4</code>) and
+the tables behind it (<code>0x107ce0</code>)</h2>
+<p>Scene 2 maps a flat 256x200 <em>work map</em> onto the screen in
+polar coordinates. Two 64000-byte tables, built once at start-up, give
+for every screen pixel the distance <code>D</code> to the centre and the
+angle <code>A</code> (0..255). The per-frame loop:</p>
+<pre><code>107c82: mov eax,ds:0x107bc4
+107c87: shl eax,0x3
+107c8a: and eax,0xfff
+107c8f: mov eax,DWORD PTR [eax*4+0x333210]   ; SIN[8n]
+107c96: sar eax,0x9
+107c99: mov ds:0x107cb8,eax                  ; patched into &#39;add eax,imm&#39; below: the twist
+107c9e: mov ebp,0x337210
+107ca3: mov edi,0x270804                     ; D table
+107ca8: mov esi,0x260e04                     ; A table
+107cad: dec ebp
+107cae: dec edi
+107caf: mov ecx,0xfa00
+107cb4: mov al,BYTE PTR [esi]                ; angle
+107cb6: inc edi
+107cb7: add eax,0x12345678                   ; + twist (immediate): may carry out of al ...
+107cbc: inc esi
+107cbd: mov ah,BYTE PTR [edi]                ; ... the carry is thrown away: ah = distance
+107cbf: inc ebp
+107cc0: and eax,0xffff
+107cc5: mov dl,BYTE PTR [eax+0x2a0204]       ; work[D &lt;&lt; 8 | (A + twist) &amp; 255]
+107ccb: mov BYTE PTR [ebp+0x0],dl            ; store to the frame buffer</code></pre>
+<p>The 16-bit address is built by <strong>byte composition</strong>:
+<code>al</code> (angle plus twist, a plain 32-bit <code>add</code> whose
+overflow into <code>ah</code> is overwritten by the next
+<code>mov ah,...</code>) and <code>ah</code> (distance). Wrapping the
+angle modulo 256 is free because the work map is 256 wide, and a
+rotation/twist of the whole tunnel is one <code>add</code> with a
+patched immediate per frame. Three table reads and no multiply per
+pixel. JS (<code>background()</code> in <code>fx02.js</code>):
+<code>buf[i] = work[(D[i] &lt;&lt; 8) | ((A[i] + sh) &amp; 0xff)]</code>
+with <code>sh = SIN[8n &amp; 0xfff] &gt;&gt; 9</code>.</p>
+<p>Building <code>D</code> and <code>A</code> (sqrt and atan2 through
+the C runtime; the <code>D</code> loop squares in integer registers
+first):</p>
+<pre><code>107cf7: imul esi,edi           ; y*y
+107d02: imul eax,ebx           ; x*x
+107d06: add eax,esi
+107d09: call 0x10f174          ; int -&gt; double
+107d0e: call 0x10f1c6          ; sqrt (inferred from the result, which equals trunc(sqrt(x*x+y*y)))
+107d13: call 0x10f01c          ; -&gt; int
+107d18: mov BYTE PTR [ecx+0x270803],al   ; D[(y+100)*320 + x+160]</code></pre>
+<pre><code>107d6b: call 0x10f245          ; atan2(y, x) (inferred; the harness prints &quot;Domain error in atan2&quot; at (0,0))
+107d70: mov ecx,0x40700000     ; * 256.0
+107d75: xor ebx,ebx
+107d77: call 0x10ee77
+107d7c: mov ebx,0x6dbe5bcd
+107d81: mov ecx,0x3fc45f30     ; * 0.15915494307111402 (about 1/(2*pi), but not equal to it)
+107d86: call 0x10ee77
+107d8b: call 0x10f020          ; -&gt; int (truncating) -&gt; byte
+107d98: mov BYTE PTR [edx+0x260e04],al   ; A[...]</code></pre>
+<p>The multiplier is <code>0x3fc45f306dbe5bcd</code> =
+0.15915494307111402, about <code>1.3e-10</code> (relative) below
+<code>1/(2*pi)</code> = 0.15915494309189535. Truncation then differs
+from the exact <code>atan2 * 256 / (2*pi)</code> on <strong>757 of the
+64000 entries</strong> (exact multiples of 32 for negative angles round
+the other way): a port that uses
+<code>Math.atan2(y, x) * 256 / (2 * Math.PI)</code> is off on those
+pixels. <code>fx02.js</code> uses <code>40.7436654315 / 256</code> as
+the multiplier, which gives 0 differences against the original's
+constant (checked over all 64000 entries) and against the emulator's
+table.</p>
+<p>The third table of <code>0x107ce0</code> is the <strong>perspective
+limit</strong>: <code>T[k][a] = max(0, a*32/(k+1) - 10)</code> for
+<code>k &lt; 0x7c</code>, <code>a &lt; 256</code> (one <code>idiv</code>
+each):</p>
+<pre><code>107dd0: mov edx,ebx
+107dd2: mov eax,ebx            ; ebx = a*32
+107dd4: sar edx,0x1f
+107dd7: idiv edi               ; edi = k + 1
+107dd9: sub eax,0xa
+107ddc: test eax,eax
+107dde: jge 0x107de2
+107de0: xor eax,eax            ; clamp at 0
+107de2: add ecx,0x4
+107de5: inc esi
+107de6: add ebx,0x20
+107de9: mov DWORD PTR [ecx+0x280200],eax</code></pre>
+<hr />
+<h2 id="10-a-column-painter-with-a-running-occlusion-limit-0x107bc8">10.
+A column painter with a running occlusion limit
+(<code>0x107bc8</code>)</h2>
+<p>The work map of section 9 is a landscape drawn column by column,
+front slices first. For each of the 256 columns <code>x</code> and each
+of 97 depth slices <code>k</code>, the height map byte <code>h</code>
+selects the limit <code>T[k][h]</code> (the row where this slice's
+silhouette ends); the slice's texel colours the column from the lowest
+row not yet painted (starting at row 199) <strong>up</strong> to that
+limit, but <strong>only if the limit is above what is already
+painted</strong>:</p>
+<pre><code>107c0e: mov ebx,DWORD PTR ds:0x107bc4        ; n (tick)
+107c14: add ebx,DWORD PTR ds:0x107bc0        ; + k
+107c1a: and ebx,0xff                         ; (n + k) &amp; 255 : the map scrolls with time, one texel per slice
+107c20: add ebx,edx                          ; + 256 * x (edx steps by 0x100 per column)
+107c22: mov cl,BYTE PTR [ebx+0x12345678]     ; texture texel (immediate = texture base, patched at 0x107c24)
+107c28: mov al,BYTE PTR [ebx+0x3c0090]       ; height map byte h
+107c2e: mov ebx,DWORD PTR ds:0x107bc0        ; k
+107c34: shl ebx,0xa                          ; k * 1024 = (k * 256) * 4
+107c37: mov ebx,DWORD PTR [ebx+eax*4+0x280204]   ; T[k][h]
+107c3e: cmp ebx,ebp                          ; ebp = lowest painted row so far (starts at 199)
+107c40: jge 0x107c57                         ; limit not above it: slice hidden, skip
+107c42: mov BYTE PTR [edi+0x2a0204],cl       ; paint one row of the work map
+107c48: dec ebp
+107c49: sub edi,0x100                        ; one row up (work map is 256 wide)
+107c4f: test edi,edi
+107c51: jl 0x107c66                          ; ran off the top: column done
+107c53: cmp ebp,ebx
+107c55: jg 0x107c42                          ; until the limit
+107c57: inc DWORD PTR ds:0x107bc0
+107c5d: cmp DWORD PTR ds:0x107bc0,0x60
+107c64: jle 0x107c0e</code></pre>
+<p><code>ebp</code> is the whole z-buffer of the column (one integer,
+the "horizon so far"), so the occlusion test is a single
+<code>cmp</code> and each pixel is written <strong>at most once</strong>
+per column. The scrolling is free: it is only the starting offset
+<code>(n + k) &amp; 255</code> of the texture column read, and the angle
+axis of the screen is the 256 columns of the map, so the map's
+<code>x</code> is "which direction around the tunnel". A scrolling polar
+landscape is thus a 256 x 97 loop plus a 64000-pixel table lookup per
+frame. JS: <code>background(n)</code> in <code>fx02.js</code>.</p>
+<hr />
+<h2
+id="11-the-landscape-painter-increments-patched-into-the-code-and-increments-that-patch-each-other-0x108d78">11.
+The landscape painter: increments patched into the code, and increments
+that patch each other (<code>0x108d78</code>)</h2>
+<p>Scenes 4 and 6 fly over a height map with a classic height-map
+("voxel") painter. For each of 145 columns, <code>0x108d78</code> first
+<strong>precomputes the 128 sample positions of the ray</strong> into
+two small arrays, then paints with a loop that only does table reads.
+The three per-sample increments are not registers or variables: they are
+the <strong>immediates of three <code>add</code> instructions</strong>,
+patched at the start of every column, and halved copies of the same
+numbers are the immediates of three other <code>add</code>s that
+<strong>patch the first three</strong> every 32 samples:</p>
+<pre><code>108d9c: mov eax,DWORD PTR [ecx*4+0x2ae310]
+108da3: mov ds:0x108e1b,eax        ; immediate of &#39;add edi,imm&#39; (0x108e19): distance step
+108da8: sar eax,1
+108daa: mov ds:0x108e47,eax        ; immediate of the patching &#39;add&#39; (0x108e41): half the step
+108daf: mov ebx,DWORD PTR ds:0x10872c
+108db5: add ebx,ecx
+108db7: mov eax,DWORD PTR [ebx*4+0x2aca10]
+108dbe: mov ds:0x108dfb,eax        ; immediate of &#39;add eax,imm&#39; (0x108dfa): u step
+108dc3: sar eax,1
+108dc5: mov ds:0x108e33,eax        ; ... half, for the patching &#39;add&#39; (0x108e2d)</code></pre>
+<pre><code>108dec: mov ch,0x4                 ; 4 groups ...
+108dee: mov cl,0x20                ; ... of 32 samples
+108df0: mov ebx,eax
+108df2: mov edx,esi
+108df4: sar ebx,0x10
+108df7: sar edx,0x10
+108dfa: add eax,0x12345678         ; u accumulator += patched step
+108dff: mov bh,dl                  ; texture address = (v &amp; 255) &lt;&lt; 8 | (u &amp; 255)
+108e01: add esi,0x12345678         ; v accumulator += patched step
+108e07: and ebx,0xffff
+108e0d: mov edx,edi
+108e0f: mov DWORD PTR ds:[ebp+0x108738],ebx     ; sample list: texture address
+108e16: sar edx,0x10
+108e19: add edi,0x12345678         ; distance accumulator += patched step
+108e1f: mov DWORD PTR ds:[ebp+0x108a58],edx     ; sample list: distance row
+108e26: add ebp,0x4
+108e29: dec cl
+108e2b: jne 0x108df0
+108e2d: add DWORD PTR ds:0x108dfb,0x12345678    ; every 32 samples: step += half of its start value (self-modifying the self-modifying code)
+108e37: add DWORD PTR ds:0x108e03,0x12345678
+108e41: add DWORD PTR ds:0x108e1b,0x12345678
+108e4b: dec ch
+108e4d: jne 0x108dee</code></pre>
+<p>So the ray steps grow linearly in four stages (1x, 1.5x, 2x, 2.5x of
+the start value): the cheap approximation of perspective foreshortening,
+with no per-sample multiply. The texture address is <strong>built by
+byte composition</strong> again: <code>mov bh,dl</code> after a 16-bit
+shift of the u accumulator gives <code>v &lt;&lt; 8 | u</code> in
+<code>bx</code>. Then the paint loop (scene 4: two pixels at a time,
+<code>ch = cl</code>):</p>
+<pre><code>108e71: mov edi,DWORD PTR ds:[ebp+0x108738]     ; texture address
+108e78: mov eax,DWORD PTR ds:[ebp+0x108a58]     ; distance row
+108e7f: mov cl,BYTE PTR [edi+0x2f0110]          ; texel
+108e85: mov ah,BYTE PTR [edi+0x3c0090]          ; height map byte -&gt; high byte of the division table index
+108e8b: mov ch,cl                               ; duplicate the texel into the high half: 2 pixels
+108e8d: mov eax,DWORD PTR [eax*4+0x2b0110]      ; screen limit = (0x640 + 0x20 * row) / c  (table built at 0x108210)
+108e94: cmp eax,edx                             ; edx = current row (starts 0xc7)
+108e96: jge 0x108ea8
+108e98: mov WORD PTR [esi+0x337210],cx          ; two pixels in one store
+108e9f: dec edx
+108ea0: sub esi,0x140                           ; one row up
+108ea6: jmp 0x108e94
+108ea8: add ebp,0x4</code></pre>
+<p>The division table (<code>0x108210</code>) replaces a per-sample
+<code>idiv</code> by a lookup:</p>
+<pre><code>108220: inc ecx
+108221: mov edx,ebx            ; ebx = 0x640 + 0x20 * row
+108223: mov eax,ebx
+108225: sar edx,0x1f
+108228: idiv ecx               ; ecx = height byte + 1
+10822a: add esi,0x4
+10822d: inc edi
+10822e: mov DWORD PTR [esi+0x2b010c],eax</code></pre>
+<p>(The table has <strong>256 rows</strong>, not 250: the oracle found
+that height map values go up to 250 and the original reads them.) The
+painter writes two pixels per <code>mov word</code>, the columns are 2
+px wide, which is why the landscape looks chunky (the harness measures
+5.5 ticks per frame for scene 4 at 50 MIPS). Scene 6 is the same walk
+with the roles of rows and columns exchanged (<code>0x108ec1</code>: it
+stores <code>cl</code> at <code>[esi+0x337210]</code> and
+<code>[esi+0x337350]</code>, +0x140 = the pixel below, and steps
+<code>esi</code> left: two pixels <em>tall</em>, painted right to left).
+JS: <code>samples()</code> and
+<code>paint4()</code>/<code>paint6()</code> in
+<code>web/fx/terrain.js</code>.</p>
+<hr />
+<h2 id="12-particle-physics-in-the-unused-rotation-fields-0x1028b0">12.
+Particle physics in the unused rotation fields
+(<code>0x1028b0</code>)</h2>
+<p>Scene 5's 192 points are objects of the shared object table. A point
+object never uses its rotation fields (+0x0c, +0x10, +0x14), so
+<strong>the velocity is stored there</strong>: position at
+<code>[ebx+0x5c..0x64]</code>, velocity at <code>[ebx+0x68..0x70]</code>
+(the same object, +0x0c further). No second array, and the update walks
+the table with one pointer (<code>ebx += 0x20</code>). The spring is
+<code>v += (target - p) &gt;&gt; 9</code> using the truncating idiom of
+section 1 (<code>shl edx,0x9 / sbb / sar eax,0x9</code>), then
+<code>p += v</code>, repeated <strong>once per timer tick elapsed since
+the previous frame</strong> (the outer <code>dec edi / jne</code>):</p>
+<pre><code>1028b0: mov edx,DWORD PTR [esi+0x3c]        ; attractor x
+1028b3: mov eax,DWORD PTR [ebx+0x5c]        ; point x
+1028b6: sub edx,eax
+1028b8: mov eax,edx
+1028ba: sar edx,0x1f
+1028bd: shl edx,0x9
+1028c0: sbb eax,edx
+1028c2: sar eax,0x9                         ; (target - p) / 512 toward zero
+1028c5: add DWORD PTR [ebx+0x68],eax        ; v += ... (velocity lives in the rotation field)
+...
+1028f8: mov eax,DWORD PTR [ebx+0x68]
+1028fb: add DWORD PTR [ebx+0x5c],eax        ; p += v
+...
+10290a: add ebx,0x20                        ; next object
+10290d: add edx,eax
+10290f: mov DWORD PTR [ebx+0x44],edx
+102912: cmp ebx,ecx                         ; 192 objects (ecx = esi + 0x1800)
+102914: jne 0x1028b0
+102916: dec edi                             ; one pass per elapsed tick
+102917: jne 0x1028a1</code></pre>
+<pre><code>10288b: mov edi,DWORD PTR ds:0x231f88      ; current tick
+102891: sub edi,DWORD PTR [esp+0xc]        ; - tick of the previous frame = number of steps to simulate
+102895: je 0x102919</code></pre>
+<p>Two properties matter for a port: the simulation is
+<strong>frame-rate independent only roughly</strong> (it integrates per
+tick, so a slow frame takes several steps in a row), and the attractor
+is sampled <strong>once per frame</strong>, not per step. At
+<code>0x102919</code> the tick is re-read <em>after</em> the loop, so
+ticks that elapsed while simulating are lost. That is why the port's
+scene 5 is exact given the original's per-frame step counts
+(<code>re/m5.json</code>) and uses an assumed cadence otherwise. JS:
+<code>step()</code> in <code>fx05.js</code>
+(<code>V[q] += tr(t[j] - P[q], 9); P[q] += V[q]</code>).</p>
+<hr />
+<h2
+id="13-one-palette-add-for-fades-flashes-and-beats-one-state-machine-in-the-timer-interrupt-0x100a00-0x100370-0x100910">13.
+One palette add for fades, flashes and beats; one state machine in the
+timer interrupt (<code>0x100a00</code>, <code>0x100370</code>,
+<code>0x100910</code>)</h2>
+<p>The palette upload adds the global level to each of the three
+channels of each of 256 colours, clamps, drops two bits (6-bit DAC) and
+writes the DAC through ports <code>3c8</code>/<code>3c9</code>:</p>
+<pre><code>100a10: mov ebx,DWORD PTR [esp]       ; level
+100a13: xor edx,edx
+100a15: xor eax,eax
+100a17: mov esi,ebx
+100a19: mov dl,BYTE PTR [edi]         ; r
+100a1b: mov al,BYTE PTR [edi+0x1]     ; g
+100a1e: add edx,ebx                   ; r + level
+100a20: add eax,ebx                   ; g + level
+100a22: xor ebx,ebx
+100a24: mov bl,BYTE PTR [edi+0x2]     ; b
+100a27: add ebx,esi                   ; b + level
+100a29: test edx,edx
+100a2b: jge 0x100a2f
+100a2d: xor edx,edx                   ; clamp at 0
+100a2f: cmp edx,0xff
+100a35: jle 0x100a3c
+100a37: mov edx,0xff                  ; clamp at 255
+...
+100a68: sar esi,0x2                   ; 8 bit -&gt; 6 bit DAC
+100a6b: sar ecx,0x2
+100a6e: mov ebx,edx
+100a70: mov eax,ebp
+100a72: sar ebx,0x2
+100a75: inc ebp
+100a76: mov dx,0x3c8
+100a7a: out dx,al                     ; DAC index
+100a7b: inc dx
+100a7d: mov al,bl
+100a7f: out dx,al                     ; r
+100a80: mov al,cl
+100a82: out dx,al                     ; g
+100a83: mov eax,esi
+100a85: out dx,al                     ; b</code></pre>
+<p>One signed level in <code>-256..+255</code>: negative = fade to
+black, positive = flash to white, with the same code and <strong>no
+multiply</strong>. The level is driven by a state machine in the timer
+callback; each command is a few instructions:</p>
+<pre><code>100855: cmp DWORD PTR ds:0x231f70,0x0
+10085c: jne 0x10086c
+10085e: test edi,edi
+100860: jge 0x100865
+100862: add edi,0x4                   ; cmd 0: level &lt; 0 -&gt; +4
+100865: test edi,edi
+100867: jle 0x10086c
+100869: sub edi,0x4                   ; level &gt; 0 -&gt; -4 (a flash decays to 0)
+10086c: cmp DWORD PTR ds:0x231f70,0x1
+100873: jne 0x100884
+100875: add edi,0x2                   ; cmd 1: fade in, +2
+100878: test edi,edi
+10087a: jle 0x100884
+10087c: xor edi,edi                   ; reached 0: level 0 ...
+10087e: mov DWORD PTR ds:0x231f70,edi ; ... and cmd 0</code></pre>
+<pre><code>100884: mov eax,ds:0x231f70
+100889: cmp eax,0x2
+10088c: jne 0x10089d
+10088e: sub edi,eax                   ; cmd 2: -2 (the command number is the speed: eax = 2)
+100890: cmp edi,0xffffff00
+100896: jge 0x10089d
+100898: mov edi,0xffffff00            ; floor -256</code></pre>
+<p>Cute detail: command 2's speed is the command number itself
+(<code>sub edi,eax</code>). Events are edge-triggered on the S3M
+position (compare against the last handled <code>(order,row)</code> with
+<code>setne/or</code>, 17 copies, compiler-generated):</p>
+<pre><code>1003c3: test ebx,ebx
+1003c5: jne 0x1003fe
+1003c7: cmp esi,0x3a                  ; order 0, row 0x3a = 58: fade in the logo
+1003cc: cmp ebx,DWORD PTR ds:0x231fd4
+1003d2: setne al
+1003d5: mov edx,eax
+1003d7: and edx,0xff
+1003dd: cmp esi,ebp
+1003df: setne al
+1003e2: and eax,0xff
+1003e7: or eax,edx                    ; (order != last order) | (row != last row)
+1003e9: je 0x1003fe
+1003eb: mov edi,0xffffff00            ; level = -256
+1003f0: mov DWORD PTR ds:0x231f70,ecx ; cmd = 1</code></pre>
+<p>And the beat flashes: the MIDAS sync callback (<code>W</code> effect
+of the S3M), accepted only while the machine is idle (cmd 0):</p>
+<pre><code>100910: mov edx,DWORD PTR ds:0x231f74
+100916: mov eax,DWORD PTR [esp+0x4]   ; the W parameter
+10091a: cmp DWORD PTR ds:0x231f70,0x0
+100921: jne 0x10094b
+100923: cmp eax,0x10
+100926: jne 0x10092d
+100928: mov edx,0x80                  ; W10: flash +0x80
+10092d: cmp eax,0x11
+100930: jne 0x100937
+100932: mov edx,0xffffff80            ; W11: dip -0x80
+100937: cmp eax,0x12
+10093a: jne 0x100941
+10093c: mov edx,0x40                  ; W12: +0x40
+100941: cmp eax,0x13
+100944: jne 0x10094b
+100946: mov edx,0xffffffc0            ; W13: -0x40
+10094b: mov DWORD PTR ds:0x231f74,edx</code></pre>
+<p>The music score therefore directly programs the visuals (416
+<code>W</code> events), with the fade level decaying 4 per tick back to
+0. JS: <code>build()</code> in <code>web/fx/fade.js</code> (the same
+machine on a tick grid) and <code>dac()</code>
+(<code>min(255, max(0, pal + lv)) &gt;&gt; 2</code>).</p>
+<hr />
+<h2
+id="14-blur-straight-to-the-screen-four-neighbours-one-divide-by-4-0x1030a0">14.
+Blur straight to the screen: four neighbours, one divide-by-4
+(<code>0x1030a0</code>)</h2>
+<p>The post-process of scenes 1, 3, 5, 7 reads the finished 320x200
+buffer and writes the blurred band <strong>directly into video
+memory</strong> (<code>[0x22ea44]</code> is the VGA window), so the blur
+doubles as the copy and no extra pass exists. Left, right, up, down are
+four displacements from one running index:</p>
+<pre><code>1030a0: xor eax,eax
+1030a2: xor edx,edx
+1030a4: mov al,BYTE PTR [ebx+0x33720f]   ; buf[i - 1]   (0x337210 - 1)
+1030aa: mov dl,BYTE PTR [ebx+0x337211]   ; buf[i + 1]
+1030b0: add edx,eax
+1030b2: xor eax,eax
+1030b4: mov al,BYTE PTR [ebx+0x3370d0]   ; buf[i - 320] (0x337210 - 0x140)
+1030ba: add eax,edx
+1030bc: xor edx,edx
+1030be: mov dl,BYTE PTR [ebx+0x337350]   ; buf[i + 320]
+1030c4: add edx,eax
+1030c6: mov eax,edx
+1030c8: sar edx,0x1f
+1030cb: shl edx,0x2
+1030ce: sbb eax,edx
+1030d0: sar eax,0x2                      ; / 4 with the signed idiom of section 1 (the sum is never negative, the compiler cannot know)
+1030d3: inc ebx
+1030d4: mov dl,al
+1030d6: mov eax,ds:0x22ea44
+1030db: mov BYTE PTR [ebx+eax*1-0x1],dl  ; store to VGA
+1030df: cmp ebx,0xe600
+1030e5: jl 0x1030a0</code></pre>
+<p>The loop runs for <code>i</code> in <code>0x1400..0xe5ff</code> only,
+i.e. rows 16..183: the 16-row bands at top and bottom are never touched
+(they stay black), which is also why the blur needs no border test: the
+neighbour reads stay inside the buffer. Because the average of four
+colour indices <em>is</em> a blur only if the palette ramp is smooth,
+the glow/ramp palette (image 12) is monotone purple to cream. JS:
+<code>fb[i] = (buf[i - 1] + buf[i + 1] + buf[i - 320] + buf[i + 320]) &gt;&gt; 2</code>
+in <code>fx01.js</code>, <code>fx03.js</code>, <code>fx05.js</code>,
+<code>fx07.js</code> (here <code>&gt;&gt;</code> is fine: the sum is
+non-negative).</p>
+<hr />
+<h2
+id="15-noise-from-a-chain-of-accumulators-no-table-and-no-rand-per-pixel-0x109940">15.
+Noise from a chain of accumulators, no table and no <code>rand()</code>
+per pixel (<code>0x109940</code>)</h2>
+<p>The ending adds grain to the cross-faded credits. Per frame,
+<code>rand()</code> is called three times to seed <strong>four 32-bit
+accumulators</strong>; per pixel the loop only adds registers into each
+other, a four-stage difference engine whose output is the low bits of
+the first one:</p>
+<pre><code>109940: mov cl,bl
+109942: and cl,0x1f
+109945: add cl,0xc
+109948: add BYTE PTR [eax+0x337210],cl   ; pixel += (bx &amp; 0x1f) + 12
+10994e: lea ecx,[eax+esi*1]              ; ecx = i + si
+109951: add esi,ecx                      ; si += i + si
+109953: add ebx,edx                      ; bx += dx
+109955: lea ecx,[edi+esi*1]              ; ecx = di + si
+109958: inc eax                          ; i++
+109959: add edi,0x8000                   ; di += 0x8000
+10995f: sub edx,ecx                      ; dx -= di + si
+109961: cmp eax,0xbe00</code></pre>
+<p>and the seeds (the three <code>rand()</code> results are
+<code>eax</code> after <code>call 0x10f09b</code>):</p>
+<pre><code>1098f7: call 0x10f09b                    ; rand() r1
+1098fc: mov ebx,DWORD PTR ds:0x231f88    ; tick
+109902: imul ebx,eax                     ; bx = n * r1
+109905: imul edx,DWORD PTR ds:0x231f88,0x1333
+10990f: add edx,0x28a38                  ; dx = n * 0x1333 + 0x28a38
+109915: call 0x10f09b                    ; r2
+10991a: add edx,eax                      ; dx += r2
+10991c: call 0x10f09b                    ; r3
+109921: neg eax
+109923: imul esi,eax,0x7d8d              ; si = -r3 * 0x7d8d
+109929: mov edi,0x1e000000</code></pre>
+<p><code>bx</code> is driven by <code>dx</code>, <code>dx</code> by
+<code>si</code> and <code>di</code>, <code>si</code> by itself and the
+pixel index: each stage integrates the one above it, which yields a
+chaotic, quickly varying low byte (<code>bx &amp; 0x1f</code>) with only
+adds and <code>lea</code>s and three seeds per frame (13 instructions
+per pixel; a <code>rand()</code> call per pixel would cost far more). It
+is not a good RNG (the vertical streaks in the picture are its
+structure, not a design), but it is cheap. Because the seeds mix the
+<strong>timer tick</strong> with <code>rand()</code>, each frame is
+different. Note <code>add BYTE PTR [...],cl</code> wraps modulo 256 (no
+clamp): the palette of the ending is a grey ramp that tolerates it. JS
+(<code>fx08.js</code>): <code>bx = imul(n2, r1)</code>,
+<code>dx = imul(n3, 0x1333) + 0x28a38 + r2</code>,
+<code>si = imul(-r3, 0x7d8d)</code>, <code>di = 0x1e000000</code>, and
+per pixel
+<code>buf[i] += (bx &amp; 0x1f) + 0xc; c = i + si; si += c; bx += dx; dx -= di + si; di += 0x8000</code>.
+The port also has to replay the exact Watcom LCG
+(<code>seed * 0x41c64e6d + 0x3039</code>,
+<code>(seed &gt;&gt; 16) &amp; 0x7fff</code>): 960 calls were used by
+scene 5 before, so the ending's first <code>rand()</code> is call
+961.</p>
+<hr />
+<h2 id="how-the-excerpts-were-verified">How the excerpts were
+verified</h2>
+<p>For every code block, each line of the form
+<code>ADDR: instruction</code> was compared (address and instruction
+text with whitespace normalised, <code>;</code> comments dropped) with
+<code>objdump -D -b binary -mi386 -M intel --adjust-vma=0x100000 --start-address=ADDR</code>
+of <code>re/obj1.bin</code> started at the first address of the block.
+The <em>interpretations</em> (what a helper call is, how scenes use a
+routine) rest on the surrounding code and on the port being bit-exact
+against the emulator, as stated in each section; the identity of the
+Watcom runtime helpers (<code>sin</code>, <code>cos</code>,
+<code>sqrt</code>, <code>atan2</code>) is inferred from the tables they
+produce.</p>
+</body>
+</html>

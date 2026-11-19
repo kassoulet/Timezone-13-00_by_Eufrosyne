@@ -3,6 +3,7 @@
 Original: `TZ1300.EXE` (DOS, PMODE/W, MIDAS), `TZ1300.DAT`, `AUMAX.S3M`, `PILIPS.S3M`; left untouched. Port: `web/` (ES modules, no build). Run: `cd web && python3 -m http.server 8000`.
 Shown 4:3 (original is 320x200 on a 4:3 screen). Player has pause, seek, scene buttons; music via libopenmpt, AUMAX then PILIPS (module swapped at 3:48).
 Reverse-engineering log: `re/NOTES.md`.
+Write-ups: [`WRITEUP-effects.md`](WRITEUP-effects.md) (timeline, fade state machine, shared 3D engine, each scene, the art, exact vs approximated) and [`WRITEUP-asm.md`](WRITEUP-asm.md) (15 sections of verified asm: rasterisers, radix sort, tables, painters, physics, fades, noise; `tools/check_writeup_asm.py` re-checks the listings); figures in `figures/` (`tools/make_figures.mjs` + `tools/make_figures.py`).
 
 ## State
 | scene | state |
@@ -38,3 +39,7 @@ Oracle (`re/m5.json` for scene 5, the frame records of the Unicorn run for the r
 | ending | 2.7 (2..3) | 25.7 | 1 |
 
 The 1997 target was a Pentium (133-200) and the author tuned the per-frame steps for it. Evidence: the camera step of scene 4 is 2*sin per frame but 1*sin in scene 6, and the harness frame costs are in ratio 5.5 : 2.3 (about 2.4), i.e. both flights have about the same speed per second at the author's frame rates. Taking a machine about 2.5x faster than the harness gives about 2.2 ticks/frame for scene 4, 2.5 for scene 5, 0.9 for scene 6 and 1.1 for the ending, hence K = 2, 2, 1, 1 (scene 5 integrates per elapsed tick, so its K only changes the attractor sampling; 2 keeps it at 35 fps). The harness cadence itself would show a scene 6 flight 2.3x slower than K=1. Seeking stays repeatable: state is replayed from the scene start (K fixed), the uitest checks it.
+
+## Write-ups on the site
+
+`../tools/mkwriteups.sh . web` regenerates `web/writeups/` from `WRITEUP-*.md`.

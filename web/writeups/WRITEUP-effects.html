@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Time Zone +13:00 (Eufrosyne, Juhla IVb 1997) - effects, art and
+timing</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+  :root{--bg:#fff;--fg:#1d1d22;--mut:#666;--ac:#c4155a;--code:#f3f3f6;--bd:#d8d8e0}
+  @media (prefers-color-scheme:dark){:root{--bg:#0b0b10;--fg:#d8d8e0;--mut:#9a9aa8;--ac:#ff6a9a;--code:#17171f;--bd:#33333f}}
+  *{box-sizing:border-box}
+  body{margin:0 auto;max-width:62rem;padding:0 16px;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,sans-serif}
+  #wunav{display:flex;gap:16px;flex-wrap:wrap;padding-top:12px;padding-bottom:8px;border-bottom:1px solid var(--bd);font-size:14px}
+  a{color:var(--ac)}
+  h1,h2,h3,h4{line-height:1.25;margin-top:1.8em}
+  img{max-width:100%;height:auto;image-rendering:auto}
+  pre{background:var(--code);border:1px solid var(--bd);border-radius:4px;padding:10px 12px;overflow-x:auto;font-size:13px;line-height:1.4}
+  code{background:var(--code);padding:1px 4px;border-radius:3px;font-size:.92em;overflow-wrap:anywhere}
+  pre code{background:none;padding:0;overflow-wrap:normal}
+  table{border-collapse:collapse;display:block;overflow-x:auto;max-width:100%}
+  td,th{border:1px solid var(--bd);padding:4px 8px}
+  blockquote{border-left:3px solid var(--bd);margin-left:0;padding-left:14px;color:var(--mut)}
+  #TOC{font-size:14px}#TOC ul{padding-left:1.2em}
+  #TOC>ul{padding-left:0;list-style:none}
+  details#toc-box{margin:12px 0}
+  </style>
+</head>
+<body>
+<nav id="wunav"><a href="../index.html">&larr; the demo</a> <a href="WRITEUP-asm.html">asm</a> <a href="WRITEUP-effects.html">effects</a> <a href="https://github.com/kassoulet/Timezone-13-00_by_Eufrosyne">README on GitHub</a></nav>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a
+href="#time-zone-1300-eufrosyne-juhla-ivb-1997---effects-art-and-timing"
+id="toc-time-zone-1300-eufrosyne-juhla-ivb-1997---effects-art-and-timing">Time
+Zone +13:00 (Eufrosyne, Juhla IVb 1997) - effects, art and timing</a>
+<ul>
+<li><a href="#0-at-a-glance" id="toc-0-at-a-glance">0. At a
+glance</a></li>
+<li><a href="#1-timeline" id="toc-1-timeline">1. Timeline</a></li>
+<li><a href="#2-the-fade--flash-state-machine-timer-callback-0x100370"
+id="toc-2-the-fade--flash-state-machine-timer-callback-0x100370">2. The
+fade / flash state machine (timer callback
+<code>0x100370</code>)</a></li>
+<li><a href="#3-the-shared-3d-engine-webfxengine3djs"
+id="toc-3-the-shared-3d-engine-webfxengine3djs">3. The shared 3D engine
+(<code>web/fx/engine3d.js</code>)</a></li>
+<li><a href="#4-scenes" id="toc-4-scenes">4. Scenes</a>
+<ul>
+<li><a href="#scene-0---logo-0x109760-0-1458-s"
+id="toc-scene-0---logo-0x109760-0-1458-s">Scene 0 - logo
+(<code>0x109760</code>, 0-14.58 s)</a></li>
+<li><a href="#scene-1---tunnel-with-glow-particles-0x102b90-1458-5333-s"
+id="toc-scene-1---tunnel-with-glow-particles-0x102b90-1458-5333-s">Scene
+1 - tunnel with glow particles (<code>0x102b90</code>, 14.58-53.33
+s)</a></li>
+<li><a href="#scene-2---polar-landscape--star-mesh-0x107e10-5333-80-s"
+id="toc-scene-2---polar-landscape--star-mesh-0x107e10-5333-80-s">Scene 2
+- polar landscape + star mesh (<code>0x107e10</code>, 53.33-80
+s)</a></li>
+<li><a href="#scene-3---two-meshes-with-points-0x1029b0-80-10667-s"
+id="toc-scene-3---two-meshes-with-points-0x1029b0-80-10667-s">Scene 3 -
+two meshes with points (<code>0x1029b0</code>, 80-106.67 s)</a></li>
+<li><a
+href="#scene-4---landscape-fly-over-with-a-mesh-0x108250-10667-13333-s"
+id="toc-scene-4---landscape-fly-over-with-a-mesh-0x108250-10667-13333-s">Scene
+4 - landscape fly-over with a mesh (<code>0x108250</code>, 106.67-133.33
+s)</a></li>
+<li><a href="#scene-5---the-swarm-0x102650-13333-17333-s"
+id="toc-scene-5---the-swarm-0x102650-13333-17333-s">Scene 5 - the swarm
+(<code>0x102650</code>, 133.33-173.33 s)</a></li>
+<li><a href="#scene-6---rotated-landscape-0x108530-17333-20333-s"
+id="toc-scene-6---rotated-landscape-0x108530-17333-20333-s">Scene 6 -
+rotated landscape (<code>0x108530</code>, 173.33-203.33 s)</a></li>
+<li><a href="#scene-7---second-tunnel-0x102e90-20333-22833-s"
+id="toc-scene-7---second-tunnel-0x102e90-20333-22833-s">Scene 7 - second
+tunnel (<code>0x102e90</code>, 203.33-228.33 s)</a></li>
+<li><a href="#scene-8---ending-0x1097f0-pilips-0-2833-s"
+id="toc-scene-8---ending-0x1097f0-pilips-0-2833-s">Scene 8 - ending
+(<code>0x1097f0</code>, PILIPS 0-28.33 s)</a></li>
+</ul></li>
+<li><a href="#5-the-art-tz1300dat" id="toc-5-the-art-tz1300dat">5. The
+art (TZ1300.DAT)</a></li>
+<li><a href="#6-port-structure" id="toc-6-port-structure">6. Port
+structure</a></li>
+<li><a href="#7-bit-exact-vs-approximated-same-as-readme"
+id="toc-7-bit-exact-vs-approximated-same-as-readme">7. Bit-exact vs
+approximated (same as README)</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1
+id="time-zone-1300-eufrosyne-juhla-ivb-1997---effects-art-and-timing">Time
+Zone +13:00 (Eufrosyne, Juhla IVb 1997) - effects, art and timing</h1>
+<p><em>Time Zone +13:00</em> by <strong>Eufrosyne</strong> (code and
+design suckho, graphics and end music duke, music dune/orange;
+<code>HALKOJA.NFO</code>), released at Juhla IVb, Raahe, 7-9.3.1997. The
+NFO says the whole demo "except voxel routine" was made in two weeks and
+that it targets a 120 MHz Pentium. <code>TZ1300.EXE</code> is an MZ stub
++ PMODE/W 1.32 + an uncompressed LE image (Watcom C + hand-written asm,
+MIDAS Sound System 0.5.0), the music is two Scream Tracker modules
+(<code>AUMAX.S3M</code>, then <code>PILIPS.S3M</code> for the ending)
+and all art is in one container, <code>TZ1300.DAT</code>. Duration 256.7
+s, 9 scenes. Everything below was read from the disassembly
+(<code>re/obj1.bin</code>, <code>re/dis.sh</code>) and checked against
+the JavaScript port in <code>web/fx/</code>; "bit-exact" always means "0
+differing pixels against the Unicorn oracle over the frames the oracle
+recorded" (section 7 says what that does and does not cover). The
+companion file <code>WRITEUP-asm.md</code> has the disassembly
+excerpts.</p>
+<p>Figures are in <code>figures/</code>
+(<code>node tools/make_figures.mjs &amp;&amp; python3 -I tools/make_figures.py</code>
+rebuilds them from the port; the screenshots are the port at the times
+given in the captions).</p>
+<h2 id="0-at-a-glance">0. At a glance</h2>
+<ul>
+<li><strong>VGA mode 13h, 320x200, 256 colours</strong>, pixels not
+square: shown 4:3. Every effect renders into a 64000-byte buffer
+(<code>0x337210</code>) or straight into <code>0xA0000</code> and the
+<strong>palette is rewritten every timer tick</strong>.</li>
+<li><strong>Animation is a function of the timer tick <code>n</code>,
+not of the music.</strong> MIDAS reprograms the PIT (reload 16951 =
+<strong>70.39 Hz</strong>) and the timer callback increments
+<code>n</code> (<code>[0x231f88]</code>); effects read it once or twice
+per frame. The music only decides <em>when a scene ends</em> (S3M
+order/row polled by the same callback) and when the fade/flash events
+fire.</li>
+<li><strong>Draw as fast as you can</strong>: there is no frame limiter.
+The frame rate depends on the machine (about 12 fps for the 3D scenes on
+the 50 MIPS model of the harness), which matters for the scenes that
+integrate state per frame (4, 5, 6, ending).</li>
+<li>One <strong>shared 3D engine</strong> (section 3) draws scenes 1, 2,
+3, 4, 5 and 7: integer fixed point, 4096-entry sine table, flat-shaded
+triangles, additive sprites, a 1-bit radix sort of the render list.
+Scenes 4 and 6 add a texture-mapped "voxel" landscape painter, scene 2 a
+polar-mapped landscape, scene 0 and 8 are pure 2D.</li>
+<li><strong>No MMX/FPU in the effect loops</strong> (no x87/MMX mnemonic
+in the effect code <code>0x100000..0x10e000</code> of the listing):
+floating point is used only at start-up (sin/cos tables, atan2/sqrt
+tables, landscape tables) through Watcom's runtime.</li>
+<li>A single <strong>global fade/flash level</strong> added to every
+palette entry drives all fade-ins, fade-outs and beat flashes (section
+2).</li>
+</ul>
+<p><img src="figures/scenes_1.png" alt="scenes 0-4" /> <img
+src="figures/scenes_2.png" alt="scenes 5-8" /></p>
+<h2 id="1-timeline">1. Timeline</h2>
+<p>AUMAX: speed 6 / tempo 144 and never changes, so 1 row = 0.10417 s, 1
+order = 64 rows = 6.667 s, 233.3 s in all (the S3M references patterns
+that do not exist; they play as 64 empty rows). Each scene function
+loops until the S3M position
+<code>(order [0x231f84], row [0x231f7c])</code>, polled by
+<code>0x100340</code>, reaches its end values; the seconds are
+<code>order*6.667 + row*0.10417</code> (<code>web/timetable.js</code>,
+<code>re/s3mtime.py</code>).</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>function</th>
+<th>starts at (order,row)</th>
+<th>seconds</th>
+<th>content</th>
+<th>state in the port</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><code>0x109760</code></td>
+<td>0,0 (black until the fade-in at 0,58)</td>
+<td>0</td>
+<td>Eufrosyne logo (DAT image 7)</td>
+<td>exact</td>
+</tr>
+<tr>
+<td>1</td>
+<td><code>0x102b90</code></td>
+<td>2,12</td>
+<td>14.58</td>
+<td>octagonal tunnel + 64 glow particles, title "time zone +13:00" from
+order 4</td>
+<td>exact per tick</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>0x107e10</code></td>
+<td>8,0</td>
+<td>53.33</td>
+<td>polar landscape tunnel + star mesh + overlay + 3 credit strips</td>
+<td>exact per tick pair</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>0x1029b0</code></td>
+<td>12,0</td>
+<td>80.00</td>
+<td>big shell mesh + point sphere, swinging camera</td>
+<td>exact per tick</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>0x108250</code></td>
+<td>16,0</td>
+<td>106.67</td>
+<td>landscape fly-over + mesh + overlay</td>
+<td>exact given the history</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>0x102650</code></td>
+<td>20,0</td>
+<td>133.33</td>
+<td>192-point swarm around an attractor, mesh in the middle</td>
+<td>exact given the step counts</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>0x108530</code></td>
+<td>26,0</td>
+<td>173.33</td>
+<td>landscape fly-over rotated 90 degrees + overlay</td>
+<td>exact given the history</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>0x102e90</code></td>
+<td>30,32</td>
+<td>203.33</td>
+<td>second tunnel mesh + 64 glows</td>
+<td>exact per tick</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>0x1097f0</code></td>
+<td>PILIPS 0,0</td>
+<td>228.33</td>
+<td>ending: two credit images cross-faded + noise streaks</td>
+<td>exact given the history</td>
+</tr>
+<tr>
+<td>-</td>
+<td>end</td>
+<td>PILIPS 4,16</td>
+<td>256.67</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>(Scene numbers are the port's <code>web/fx/fxNN.js</code>. Scene 7
+ends at AUMAX (34,16) = 228.33 s: the original then stops AUMAX, loads
+PILIPS and runs the ending for 28.33 s.)</p>
+<p>Frame cost seen in the Unicorn harness (20 ns per instruction, about
+a 50 MIPS machine; the harness clock runs at 70.4 ticks/s): scene 1 6.8
+ticks/frame, 2 6.0, 3 7.7, 4 5.5, 5 6.4, 6 2.3, 7 6.5, ending 2.7.
+<code>README.md</code> explains why the player uses K = 2, 2, 1, 1 ticks
+per frame for scenes 4, 5, 6 and the ending.</p>
+<p><strong>Music/clock caveat.</strong> With no sound card MIDAS steps
+the module once per timer tick assuming exactly 70 Hz, so the harness
+music runs 70.39/70 = 0.56 % fast against the nominal tempo and the
+oracle's "tick n" is <code>70 t + 8.75</code>. The player uses nominal
+music time and <code>n = 7 + 70.39 t</code>; the offset is arbitrary (it
+is the load time on a real machine).</p>
+<h2 id="2-the-fade--flash-state-machine-timer-callback-0x100370">2. The
+fade / flash state machine (timer callback <code>0x100370</code>)</h2>
+<p><img src="figures/fade_level.png" alt="fade level" /></p>
+<p>The timer interrupt calls <code>0x100370</code> on every tick (70.39
+Hz): <code>n++</code>, poll the S3M position, then run a small state
+machine on a command <code>cmd</code> (<code>[0x231f70]</code>) and a
+<strong>level</strong> (<code>[0x231f74]</code>, -256..0, 0 = no
+change). The same tick uploads the palette (<code>0x100a00</code>):
+<code>DAC[i] = clamp(pal[i] + level, 0, 255) &gt;&gt; 2</code> on all
+three channels. One scalar added to every channel means a negative level
+fades towards black and a positive level flashes towards white, with the
+same code.</p>
+<table>
+<thead>
+<tr>
+<th>cmd</th>
+<th>per tick</th>
+<th>used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>level moves 4 towards 0</td>
+<td>hold, and the decay of a beat flash</td>
+</tr>
+<tr>
+<td>1</td>
+<td>+2 until above 0, then level 0 and cmd 0</td>
+<td>fade in from black (128 ticks = 1.8 s)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>-2 down to -256</td>
+<td>slow fade out</td>
+</tr>
+<tr>
+<td>3</td>
+<td>-8 down to -256</td>
+<td>fast fade out (0.45 s)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>-1 down to -256</td>
+<td>very slow fade out (final)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>+1 up to 0</td>
+<td>implemented, no event uses it</td>
+</tr>
+</tbody>
+</table>
+<p>Events fire once when <code>(order,row)</code> changes to a listed
+value (<code>reset</code> = level forced to -256 first). AUMAX: (0,58)
+in+reset; (1,58) cmd 2; (2,12) in+reset; (7,40) cmd 2; (8,0) cmd 0;
+(11,58) cmd 3; (12,0) in+reset; (15,58) cmd 3; (16,0) in+reset; (19,58)
+cmd 3; (20,0) in+reset; (25,40) cmd 2; (26,0) cmd 0+reset; (30,26) cmd
+3; (30,32) in+reset; (33,32) cmd 4. PILIPS: (0,0) in+reset; (3,0) cmd 4.
+So the logo is shown black until 6.04 s, scenes 2..7 each start from
+black with a fade in, and scene 2 comes back from the black left by the
+slow fade of (7,40) through cmd 0 at (8,0) (+4/tick, 0.9 s); scene 6
+does the same at (26,0).</p>
+<p><strong><code>W</code> sync commands.</strong> 416 S3M <code>W</code>
+effects in AUMAX (info 0x10..0x14) call the MIDAS sync callback
+<code>0x100910</code> from the player: <strong>only when cmd =
+0</strong>, info 0x10 sets the level to +0x80, 0x11 to -0x80, 0x12 to
++0x40, 0x13 to -0x40 (0x14 is ignored). The decay of cmd 0 (4/tick) then
+turns each of them into a 0.2-0.45 s flash to white or dip to black on
+the beat. That is the pulsing you see in the tunnel scenes.</p>
+<p>Port: <code>web/fx/fade.js</code> runs the same machine on a tick
+grid (<code>web/fx/sync.js</code> = the 416 W commands, extracted by
+<code>re/mk_sync.py</code>). <strong>Approximated</strong>: the W flash
+lands about 0.5 tick before the row boundary the events use (fitted
+constant <code>SYNC_LEAD</code>), and the tick phase is fitted. Over the
+whole Unicorn run (<code>tools/fxcheck_fade.mjs</code>): AUMAX 11157 of
+15994 timer records exact, 4577 within one tick (4 DAC units), 260
+worse; PILIPS 1603 / 262 / 126 of 1991. The "worse" ones are flash edges
+one tick off and the first ~60 ticks of the ending.</p>
+<h2 id="3-the-shared-3d-engine-webfxengine3djs">3. The shared 3D engine
+(<code>web/fx/engine3d.js</code>)</h2>
+<p><img src="figures/art_meshes_wire.png" alt="meshes" /></p>
+<p><strong>Tables.</strong> <code>sin</code>/<code>cos</code> are 4096
+entries of <code>int(sin(a) * 32768)</code> (truncated),
+<code>a += 0.001533980788085938</code> (= 3.141592654 / 2048, the
+author's pi; <code>0x102570</code>, tables at <code>0x333210</code> and
+<code>0x300110</code>). Every angle is an index
+<code>&amp; 0xfff</code>; the animations are linear combinations such as
+<code>sin[5n]</code>, <code>sin[9n]</code>, so each scene is a Lissajous
+of the tick. <code>Math.sin</code>/<code>Math.cos</code> reproduce the
+integer tables exactly (<code>tools/checksin.mjs</code>).</p>
+<p><strong>Objects.</strong> A scene is a table
+<code>count, camera{x,y,z,rx,ry,rz}, objects[]</code> with 32-byte
+objects (x,y,z, rx,ry,rz, scale, mesh byte at +0x1c, type byte at
++0x1e). <code>0x1024a0</code> walks it and dispatches on the type:</p>
+<table>
+<thead>
+<tr>
+<th>type</th>
+<th>object</th>
+<th>emits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4</td>
+<td>point</td>
+<td>16x16 additive spot (sprite sampled every 8th texel,
+<code>src*8</code>)</td>
+</tr>
+<tr>
+<td>9</td>
+<td>point</td>
+<td>16x16 spot, <code>src*2 - size</code>, size grows with distance</td>
+</tr>
+<tr>
+<td>5</td>
+<td>point</td>
+<td>scaled 128x128 additive glow, size <code>0x100 - d/64 + 0x20</code>
+clamped 0x10..0xff</td>
+</tr>
+<tr>
+<td>14</td>
+<td>point</td>
+<td>same glow, size from <code>d/128</code> (the attractor of scene
+5)</td>
+</tr>
+<tr>
+<td>1, 3</td>
+<td>mesh</td>
+<td>flat triangles <code>&gt;&gt;17</code>, no depth cue (3 also emits a
+spot per visible vertex, <code>src*8</code>)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>mesh</td>
+<td>only the spot per visible vertex</td>
+</tr>
+<tr>
+<td>6, 8</td>
+<td>mesh</td>
+<td>flat triangles <code>&gt;&gt;17</code> with depth cue (8 also emits
+a type-7 spot per vertex)</td>
+</tr>
+<tr>
+<td>10, 11</td>
+<td>mesh</td>
+<td>triangles <code>&gt;&gt;16</code> + 0x28 bias, depth cue</td>
+</tr>
+<tr>
+<td>12, 13</td>
+<td>mesh</td>
+<td>triangles <code>&gt;&gt;16</code>, depth cue</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Transform.</strong> Mesh (<code>0x100ae0</code>): build the
+object's 3x3 rotation (z, x, y), combine with the camera rotation (z, x,
+y) one column at a time, scale by <code>obj.scale &gt;&gt; 8</code>;
+vertex = column combination;
+<code>depth = (acc/2 + camZ&lt;&lt;12) &gt;&gt; 8</code>,
+<code>screen = (acc/2 + cam&lt;&lt;12) / depth + (160, 100)</code>.
+Points (<code>0x102060</code>) do the same for one vertex. All matrix
+products are <code>(a*b +- c*d) &gt;&gt; 15</code> with the
+<em>truncating</em> signed shift (see asm section 1). A face needs depth
+&gt; 0 on all three vertices, one vertex on screen, and must be
+back-face culled by <code>(ya-yc)(xa-xb) &lt; (xa-xc)(ya-yb)</code>.
+<strong>Shade</strong> =
+<code>-(camera-z row . face normal) &gt;&gt; 16 (or 17)</code> plus the
+bias and a depth cue <code>(sum of depths - 0x40000) / 4096</code>,
+clamped to 0..0xbf. The per-face normals are <em>precomputed in the
+mesh</em> (arrays 13..15); mesh 6's normal-z array runs 0x80 bytes past
+the end of the mesh in the original, and the port includes those
+bytes.</p>
+<p><strong>Render list.</strong> Every triangle/spot/glow becomes a
+64-byte entry at <code>0x235e58</code> (x1,y1,x2,y2,x3,y3 at +0..0x14,
+key +0x18, shade or size +0x1c, entry type +0x20, key = sum of vertex
+depths or 3d). A <strong>32-pass binary radix sort</strong>
+(<code>0x107a78</code>) sorts the key ascending, the draw loop walks it
+far to near (painter's algorithm).</p>
+<p><strong>Rasterisers.</strong> Flat triangle <code>0x1036ff</code>
+(fast path when every vertex is inside, else per-pixel clip), glow
+<code>0x107937</code> (scaled 128x128 sprite), spots
+<code>0x1077dc</code>/<code>0x107889</code> (16x16). All writes go to a
+320x200 byte buffer as <code>dst = min(src*k + dst, 0xbf)</code> for
+sprites (additive, saturating at 0xbf) and plain shade stores for
+triangles. <strong>Palette indices stay below 0xc0 on purpose</strong>:
+the top 64 entries belong to the overlays that scenes 2, 4, 6 paint with
+<code>+0xc0</code>.</p>
+<p><strong>Post.</strong> Scenes 1, 3, 5, 7 finish with a 4-tap blur
+written straight to VGA:
+<code>out[i] = (b[i-1] + b[i+1] + b[i-320] + b[i+320]) &gt;&gt; 2</code>
+for <code>i</code> in <code>0x1400..0xe5ff</code> (rows 16..183; the
+rest of the screen stays black, hence the letterbox bands). The glow
+sprite (a soft round blob), the tunnel mesh and the star ramp palette
+(DAT image 12) are the whole visual vocabulary of these scenes.</p>
+<h2 id="4-scenes">4. Scenes</h2>
+<h3 id="scene-0---logo-0x109760-0-1458-s">Scene 0 - logo
+(<code>0x109760</code>, 0-14.58 s)</h3>
+<p>DAT image 7 (the Eufrosyne graffiti logo, 320x200) copied to VGA
+every frame; only the palette moves: black until (0,58), fade in, W
+flashes on the beat, fade out at (1,58), black until scene 1.
+<strong>Exact</strong>: pixels in all 1727 oracle frames, DAC equal
+given the original's own fade level
+(<code>tools/fxcheck00.mjs</code>).</p>
+<h3 id="scene-1---tunnel-with-glow-particles-0x102b90-1458-5333-s">Scene
+1 - tunnel with glow particles (<code>0x102b90</code>, 14.58-53.33
+s)</h3>
+<p>Object table of 65 objects: object 0 is the <strong>tunnel mesh
+4</strong> (type 10, 260 vertices, 516 faces: an octagonal ring extruded
+along y, scale 1024), objects 1..64 are type-5 <strong>glow
+particles</strong>. Per frame, with <code>n</code> read once at the
+start:</p>
+<ul>
+<li>camera <code>x = sin[5n]/128</code>, <code>z = sin[3n]/128</code>,
+<strong><code>y = -((n&lt;&lt;5) &amp; 0x1fff)</code></strong> (flying
+down the tunnel; the wrap period 0x2000 is presumably the mesh length,
+there is no visible jump), rotation
+<code>rx = sin[9n]/0xc0 - 0x400</code>, <code>ry = sin[4n]/0xc0</code>,
+<code>rz = sin[7n]/0xc0</code>;</li>
+<li>particle k: <code>x = sin[11n + 0x543 k]/128</code>,
+<code>y = sin[9n + 0x210f k]/32 + camY - 1000</code>,
+<code>z = sin[6n + 0xa56 k]/128</code>, each one a different phase of
+the same three sines;</li>
+<li>clear the buffer, transform mesh then points, radix sort, rasterise
+(flat shaded triangles in the ramp palette, then the glows add up and
+saturate at 0xbf: the white-hot blooms);</li>
+<li>from AUMAX order 4 (26.7 s) the <strong>title overlay</strong> (DAT
+image 6, rows 64..136, "time zone +13:00") is added:
+<code>v = max(img - d, 0) + buf</code> (clamped 0xbf) with
+<code>d = sin[((n&gt;&gt;1) + 0x500)] / 128 + 0xd0</code>, so the text
+is subtracted by a slowly pulsing offset (<code>d</code> runs from -48
+to 464) and fades in and out; the tick is read a second time at this
+point;</li>
+<li>blur as in section 3.</li>
+</ul>
+<p><strong>Exact</strong> for a given tick: 402 of 402 oracle frames
+(0..53 s) identical, DAC identical (<code>tools/fxcheck01.mjs</code>).
+Exactness is per tick value: the oracle only records <code>n</code> at
+the end of the frame, so the checker searches the <code>n</code> that
+reproduces each frame; each one found one.
+<strong>Approximated</strong>: which <code>n</code> the player uses at a
+music time (<code>n = 7 + 70.39 t</code>) and the frame rate (the player
+draws at the display rate).</p>
+<p><img src="figures/s1_tunnel_title.png" alt="tunnel with title" /></p>
+<h3 id="scene-2---polar-landscape--star-mesh-0x107e10-5333-80-s">Scene 2
+- polar landscape + star mesh (<code>0x107e10</code>, 53.33-80 s)</h3>
+<p>Two 2D effects and one 3D object:</p>
+<ul>
+<li><strong>Polar landscape.</strong> A 256x200 <em>work map</em> is
+painted column by column (one column per x, i.e. per angle): for depth
+slices <code>k = 0..0x60</code> the height map (DAT image 8) at
+<code>((n + k) &amp; 255) + 256 x</code> gives a screen limit
+<code>T[k][h] = max(0, h*32/(k+1) - 10)</code> and the slice's texel
+(DAT image 11) fills the column from the bottom up to it while it is
+higher than anything nearer (a voxel-style column painter with
+occlusion). The screen is then read <strong>in polar
+coordinates</strong> from that map:
+<code>screen(x,y) = work[ D(x,y) &lt;&lt; 8 | (A(x,y) + (sin[8n] &gt;&gt; 9)) &amp; 255 ]</code>,
+<code>D = int(sqrt(x^2+y^2))</code>,
+<code>A = int(atan2(y,x) * 256/2pi)</code> from tables built at start-up
+(<code>0x107ce0</code>). A flat landscape seen from inside a tube,
+twisting with <code>sin[8n]</code>.</li>
+<li><strong>Star mesh</strong>: mesh 1 (240 vertices, type 8: shaded
+triangles + additive points), scale 256, camera (-500, 0, -2000),
+rotation <code>6n, 7n, 5n</code>, position
+<code>sin[6n]/64, sin[5n]/64, sin[9n]/64</code>. It uses the tick read
+at the <em>end of the previous frame</em> (first frame: at rest).</li>
+<li><strong>Overlay</strong> DAT image 3 (the green block letters,
+<code>+0xc0</code> palette) and three <strong>credit strips</strong>
+(DAT image 2, 3 x 42 rows: suckho, duke, dune) shown at
+(8,0x21)-(9,0x1f), (9,0x21)-(10,0x1f), (10,0x21)-(11,0x1f).</li>
+</ul>
+<p><strong>Exact</strong> for a given tick pair (311 of 311 frames;
+strips read the row one record earlier in rare frames). The table of
+<code>atan2</code> needed care: the original multiplies by the double
+<code>0x3fc45f306dbe5bcd</code> (0.15915494307111, slightly below 1/2pi)
+after <code>* 256</code>, which differs from the exact
+<code>256/2pi</code> on 757 of the 64000 entries (exact multiples of 32
+for negative angles); the port uses an equivalent constant (0
+differences against the emulator's table).</p>
+<p><img src="figures/s2_landscape_tunnel.png"
+alt="polar landscape + star" /></p>
+<h3 id="scene-3---two-meshes-with-points-0x1029b0-80-10667-s">Scene 3 -
+two meshes with points (<code>0x1029b0</code>, 80-106.67 s)</h3>
+<p>No particles: <strong>mesh 0</strong> (660 vertices, 960 faces, type
+3: a big dark shell, scale 2048, <code>ry = 2n</code>) and <strong>mesh
+2</strong> (130 vertices, type 2: only the additive spots of its
+vertices, rotating <code>4n, 5n, 3n</code> with a pulsing scale
+<code>sin[32n]/128 + 0x300</code>) inside it; the camera swings:
+<code>x = -1024</code>, <code>y = sin[4n]/16 - 0x1800</code>,
+<code>rx = sin[13n + 0x800]/512</code>,
+<code>ry = sin[16n + 0x800]/256 + 0x400</code>,
+<code>rz = sin[11n + 0x800]/256 - 0x300</code>. Blur. A pure function of
+<code>n</code>: <strong>exact</strong>, 241 of 241 frames.</p>
+<p><img src="figures/s3_two_meshes.png" alt="two meshes" /></p>
+<h3
+id="scene-4---landscape-fly-over-with-a-mesh-0x108250-10667-13333-s">Scene
+4 - landscape fly-over with a mesh (<code>0x108250</code>, 106.67-133.33
+s)</h3>
+<p>The classic <strong>height-map landscape painter</strong> (the "voxel
+routine", which the NFO excepts from the two weeks the rest took, so
+probably older code), <code>0x108d78</code>, texture DAT image 9, height
+map image 8, plus mesh 5 (288 vertices, type 8, scale 192) and the
+overlay DAT image 5 (the vertical bar with the crosshair on the right
+edge).</p>
+<ul>
+<li>The camera is not a function of <code>n</code>: each frame the
+heading <code>e = sin[4n]/128 + sin[7n]/256 + 0x280 (mod 0x500)</code>
+is computed, and the position accumulators advance
+<code>B -= 2 sin[e*4096/0x500]</code>, <code>C += 2 cos[...]</code>. The
+painter of the <em>next</em> frame gets <code>(e, B, C)</code>, so the
+flight depends on the frame cadence (factor 2 here, 1 in scene 6).</li>
+<li>The painter walks <strong>145 screen columns</strong> (each 2 px
+wide, <code>L = 0x91..1</code>) and for each one <strong>128
+samples</strong> along a ray whose three increments (u step, v step,
+distance step) are <code>cos[2L]</code>, <code>sin[esi + 2L]</code>,
+<code>cos[esi + 2L]</code> (tables
+<code>sin/cos(0.7953981635 - i*2pi/1280) * 65536</code> truncated, built
+at <code>0x108100</code>) and <strong>grow by half of their start value
+every 32 samples</strong> (perspective). Each sample gives a texture
+address and a distance row; the height map selects a <strong>division
+table</strong> entry <code>(0x640 + 0x20 row) / c</code> = the screen
+row up to which this sample's texel is painted (from the bottom up,
+never over an already-painted pixel).</li>
+<li>The mesh object (updated after the render) is drawn over it with the
+usual engine.</li>
+</ul>
+<p><strong>Exact</strong> given the original's frame history (341 of 341
+frames); the port replays from the scene start with K = 2 ticks per
+frame, which is an assumption (README, Cadence).</p>
+<p><img src="figures/s4_landscape_mesh.png"
+alt="landscape + mesh" /></p>
+<h3 id="scene-5---the-swarm-0x102650-13333-17333-s">Scene 5 - the swarm
+(<code>0x102650</code>, 133.33-173.33 s)</h3>
+<p>Object 0 is mesh 3 (512 vertices, type 3, scale 320: the dark
+"hourglass"), object 1 a <strong>type-14 glow attractor</strong> at
+<code>(cos[7n]/64, sin[23n]/128, sin[7n]/64)</code> and objects 2..193
+are 192 type-4 points. The points are a <strong>simulation</strong>:
+start positions from 5 <code>rand()</code> calls each (Watcom LCG
+<code>seed*0x41c64e6d + 0x3039</code>,
+<code>(seed&gt;&gt;16)&amp;0x7fff</code>, seed 1):
+<code>x = cos[r1 &amp; 0xfff] / ((r2 &gt;&gt; 10) + 0x30)</code>,
+<code>y = (r3 &gt;&gt; 5) - 0x200</code>,
+<code>z = sin[r4 &amp; 0xfff] / ((r5 &gt;&gt; 10) + 0x30)</code>,
+velocity 0; then <strong>per elapsed timer tick</strong>
+<code>v += (target - p) &gt;&gt; 9</code>, <code>p += v</code> (a spring
+towards the attractor, integer and truncating). The camera orbits
+<code>(-cos[4n-0x400]/32, 0, sin[4n-0x400]/32)</code>. The simulation
+steps once per <em>elapsed tick</em> between two reads of the timer, so
+a slow machine takes bigger steps per frame and the positions depend on
+the history, not on <code>n</code> alone.</p>
+<p><strong>Exact</strong> (440 of 440 frames) when fed the original's
+steps per frame (<code>re/m5.json</code>, read from the original's
+object table by <code>re/dump5.py</code>: every consecutive pair of
+tables is reproduced exactly by <code>m</code> repeated steps, m =
+5..9). The player's cadence is an assumption (K = 2 ticks per
+frame).</p>
+<p><img src="figures/s5_swarm_b.png" alt="swarm" /></p>
+<h3 id="scene-6---rotated-landscape-0x108530-17333-20333-s">Scene 6 -
+rotated landscape (<code>0x108530</code>, 173.33-203.33 s)</h3>
+<p>The same painter turned 90 degrees (<code>0x108ec1</code>: columns
+become horizontal 2-px bands painted right to left), texture DAT image
+10, the left-edge bar of DAT image 4 as overlay, no 3D object, no blur.
+The heading is <code>sin[2n]/64 + sin[5n]/256 + 0x280</code> and the
+step is 1 (not 2) per frame. <strong>Exact</strong> given the history
+(914 of 914 frames).</p>
+<p><img src="figures/s6_landscape_rot.png"
+alt="rotated landscape" /></p>
+<h3 id="scene-7---second-tunnel-0x102e90-20333-22833-s">Scene 7 - second
+tunnel (<code>0x102e90</code>, 203.33-228.33 s)</h3>
+<p>Scene 1's engine with other numbers: <strong>mesh 6</strong> (260
+vertices, type 12, another tunnel mesh: a ring of overlapping tubes in
+the wire view) and 64 type-5 glows
+(<code>x = sin[14n + 0x543k]/128</code>,
+<code>y = sin[11n + 0x210fk]/32 + camY - 1000</code>,
+<code>z = sin[9n + 0xa56k]/128</code>), camera
+<code>x = sin[9n]/0xc0</code>, <code>y = -((48n) &amp; 0x1fff)</code>,
+<code>z = sin[6n]/0xc0</code>, <code>rx = sin[11n]/128 - 0x400</code>,
+<code>ry = sin[7n]/0xc0</code>, <code>rz = sin[9n]/0xc0</code>, blur.
+Scene 6 fades out at (30,26) (cmd 3) and this scene fades in at (30,32).
+A pure function of <code>n</code>: <strong>exact</strong>, 268 of 268
+frames. The oracle found a bug that is worth knowing: mesh 6's normal
+arrays run past the end of the mesh, so the original reads 0x80 bytes of
+whatever follows.</p>
+<p><img src="figures/s7_tunnel_glows.png" alt="tunnel 2" /></p>
+<h3 id="scene-8---ending-0x1097f0-pilips-0-2833-s">Scene 8 - ending
+(<code>0x1097f0</code>, PILIPS 0-28.33 s)</h3>
+<p>Two DAT credit images (0: "gfx.duke code.suckho music.dune/orange",
+1: the greetings list) in rows 48..191, cross-faded by a sine: with
+<code>e = (sin[2n + 0x100] &gt;&gt; 9) + 0x40</code>,
+<code>out = max(0, img1/2 - e) + max(0, img0/2 - (0x80 - e))</code> (the
+two images trade brightness as <code>e</code> oscillates, each fading by
+<em>subtraction</em> of an offset in a shared grey ramp). On top,
+<strong>noise streaks</strong>: three <code>rand()</code> per frame seed
+a four-accumulator generator (asm section 12) that adds
+<code>(bx &amp; 0x1f) + 0xc</code> to every pixel, giving the vertical
+grain. PILIPS fades in at (0,0) and out with cmd 4 at (3,0).
+<code>n</code> counts ticks since the ending started and is read three
+times per frame (blend <code>0x109872</code>, noise
+<code>0x1098fc</code>, <code>0x109905</code>; ticks pass while the blend
+runs). The rand state continues from scene 5, which consumed 960 calls
+(192 x 5) before: seed 1 is verified by the exact ending (726 of 726
+frames).</p>
+<p><img src="figures/s8_ending_b.png" alt="ending" /></p>
+<h2 id="5-the-art-tz1300dat">5. The art (TZ1300.DAT)</h2>
+<p><img src="figures/art_dat_images.png" alt="DAT images" /></p>
+<p>13 concatenated "mhwanh" images (32-byte big-endian header: version
+4, width, height, 256; then a 768-byte palette with 8-bit values used
+<code>&gt;&gt;2</code> for the DAC; then width*height indices). The
+original reads slices into fixed addresses at start-up
+(<code>0x109070</code>; the port's <code>MEM</code> table in
+<code>web/fx/dat.js</code> is compared equal to the memory dump).
+Palettes are <em>composed</em>: scenes 2, 4, 6 take the first 192
+colours (0x240 bytes) of the texture image and the first 64 of the
+overlay image at index 0xc0.</p>
+<table>
+<thead>
+<tr>
+<th>image</th>
+<th>size</th>
+<th>used by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0, 1</td>
+<td>320x200</td>
+<td>ending (credits, greetings)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>320x200</td>
+<td>three credit strips of scene 2 (3 x 42 rows)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>320x200</td>
+<td>scene 2 overlay (green block letters)</td>
+</tr>
+<tr>
+<td>4, 5</td>
+<td>320x200</td>
+<td>scene 6 / scene 4 overlay (bar with a crosshair, at the left / right
+edge)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>320x200</td>
+<td>scene 1 title "time zone +13:00"</td>
+</tr>
+<tr>
+<td>7</td>
+<td>320x200</td>
+<td>logo</td>
+</tr>
+<tr>
+<td>8</td>
+<td>256x256</td>
+<td>height map of scenes 2, 4, 6</td>
+</tr>
+<tr>
+<td>9, 10, 11</td>
+<td>256x256</td>
+<td>landscape textures of scenes 4, 6, 2</td>
+</tr>
+<tr>
+<td>12</td>
+<td>1x1</td>
+<td>palette only: the purple-to-cream ramp of scenes 1, 3, 5, 7</td>
+</tr>
+</tbody>
+</table>
+<p>The 7 meshes live in the data object
+(<code>0x203838..0x22e9b8</code>, pointer table <code>0x260de8</code>)
+and are extracted by <code>re/mk_assets3d.py</code>
+(<code>web/assets/tz13_mesh.bin</code>, <code>tz13_3d.bin</code>).
+Header <code>[nv, nf, byte offsets...]</code>: x, y, z arrays, face
+indices a, b, c, face normals.</p>
+<h2 id="6-port-structure">6. Port structure</h2>
+<p><code>web/player.js</code> (canvas 2D, 4:3, pause + seek + scene
+buttons, libopenmpt music with AUMAX swapped for PILIPS at 3:48),
+<code>web/timetable.js</code>, one <code>web/fx/fxNN.js</code> per scene
+(<code>init()</code>, <code>render(t, ctx)</code>),
+<code>engine3d.js</code>, <code>terrain.js</code> (the two painters),
+<code>fade.js</code>, <code>dat.js</code>. Scenes that are pure
+functions of <code>n</code> seek instantly; scenes 4, 5, 6 and the
+ending replay their state from the scene start (fixed K), so a seek is
+repeatable (<code>tools/uitest.mjs</code>).</p>
+<h2 id="7-bit-exact-vs-approximated-same-as-readme">7. Bit-exact vs
+approximated (same as README)</h2>
+<ul>
+<li><strong>Exact</strong> (0 differing pixels against the Unicorn run
+of the original): logo 1727/1727; scene 1 402/402; scene 2 311/311;
+scene 3 241/241; scene 4 341/341; scene 5 440/440; scene 6 914/914;
+scene 7 268/268; ending 726/726; the palette given the fade level the
+original had.</li>
+<li><strong>Exact per tick, not per music time</strong>: the checkers
+search, for each oracle frame, the tick(s) the original read. That the
+<em>player</em> shows those frames at the right <em>music time</em> is
+the fitted part.</li>
+<li><strong>Approximated</strong>: (1) the fade/flash level over time
+(<code>fade.js</code>, sections 2 and 7 of README: 98 % of timer records
+within one tick); (2) the mapping music time -&gt; tick
+(<code>n = 7 + 70.39 t</code>, arbitrary offset); (3) the frame cadence
+of scenes 4, 5, 6 and the ending (K = 2, 2, 1, 1 ticks per frame, an
+assumption about a 1997 Pentium), which changes the exact landscape
+position and the exact particle positions you see, not the look; (4) the
+original's frame rate for scenes 1, 2, 3, 7 (the player draws at the
+display refresh).</li>
+<li>Scene boundaries are the exact <code>(order,row)</code> the original
+waits for, converted to seconds with the constant S3M tempo.</li>
+</ul>
+</body>
+</html>
