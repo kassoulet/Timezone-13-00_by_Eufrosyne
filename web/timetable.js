@@ -6,8 +6,8 @@ const pos = (o, r) => o * ORD + r * ROW;
 export const A_END = pos(34, 16);            // scene 7 ends at AUMAX order 34 row 16 (the original then stops AUMAX and loads PILIPS)
 export const DUR = A_END + pos(4, 16);       // scene 8 ends at PILIPS order 4 row 16
 export const FX = [
-  [0, 'eufrosyne logo'], [pos(2, 12), 'tunnel + particles'], [pos(8, 0), 'fx2 (0x107e10)'], [pos(12, 0), 'fx3 (0x1029b0)'], [pos(16, 0), 'fx4 (0x108250)'],
-  [pos(20, 0), 'fx5 (0x102650)'], [pos(26, 0), 'fx6 (0x108530)'], [pos(30, 32), 'fx7 (0x102e90)'], [A_END, 'end (PILIPS)'],
+  [0, 'eufrosyne logo'], [pos(2, 12), 'tunnel + particles'], [pos(8, 0), 'landscape tunnel + mesh'], [pos(12, 0), 'two meshes + points'], [pos(16, 0), 'landscape + mesh'],
+  [pos(20, 0), 'particle swarm'], [pos(26, 0), 'landscape (rotated)'], [pos(30, 32), 'tunnel + glows'], [A_END, 'ending (PILIPS)'],
 ].map(([t0, name], i, a) => ({ i, t0, t1: i + 1 < a.length ? a[i + 1][0] : DUR, name }));
 export const fxAt = t => { let k = 0; for (const e of FX) if (t >= e.t0) k = e.i; return k; };
 export const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
