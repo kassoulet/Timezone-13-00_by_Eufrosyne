@@ -1,9 +1,13 @@
-// node tools/fxcheck_fade.mjs ORACLE.json [N0] : compares web/fx/fade.js level(1,t) with the fade level recorded by the original's timer callback.
-// In the harness (no sound card) the S3M is stepped by the PIT, which MIDAS assumes to run at 70 Hz (real 70.39): music runs K = 1.0048 x too fast,
-// so the harness tick n maps to nominal music time t = (n-N0)/TICK*K (with a sound card the music is sample-timed at nominal speed).
+// node tools/fxcheck_fade.mjs ORACLE.json [N0] : compares web/fx/fade.js level(mod,t) with the fade level recorded by the original's timer callback, for the whole run
+// (AUMAX records, then PILIPS records where the tick counter restarts). In the harness (no sound card) MIDAS steps the S3M once per timer tick assuming exactly 70 Hz
+// (the PIT really runs at 70.39 Hz), so the harness maps tick n to nominal music time t = (n-N0)/70 (with a sound card the music is sample-timed at nominal speed, ticks 70.39/s).
+// Best offsets found: N0 = 8.75 (AUMAX), 5.25 (PILIPS).
 import { readFileSync } from 'node:fs';
-import { level, TICK } from '../web/fx/fade.js';
-const o = JSON.parse(readFileSync(process.argv[2])), N0 = +(process.argv[3] ?? 7), K = 1.0048;
-const hist = {};
-for (const [n, , , lv] of o.timer) { const d = level(1, (n - N0) / TICK * K) - lv; const k = Math.abs(d) <= 4 ? 'within 4 (1 tick)' : Math.abs(d) <= 16 ? 'within 16' : 'worse'; hist[k] = (hist[k] ?? 0) + 1; }
-console.log('timer records', o.timer.length, hist);
+import { level } from '../web/fx/fade.js';
+const o = JSON.parse(readFileSync(process.argv[2])), N0 = +(process.argv[3] ?? 8.75);
+let cut = 0; while (o.timer[cut + 1][0] > o.timer[cut][0]) cut++;
+for (const [mod, S, off] of [[1, o.timer.slice(0, cut + 1), N0], [2, o.timer.slice(cut + 1), N0 - 3.5]]) {
+  const h = { exact: 0, within1tick: 0, worse: 0 };
+  for (const [n, , , lv] of S) { const d = Math.abs(level(mod, (n - off) / 70) - lv); h[d === 0 ? 'exact' : d <= 4 ? 'within1tick' : 'worse']++; }
+  console.log('module', mod, 'records', S.length, JSON.stringify(h));
+}

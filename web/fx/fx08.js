@@ -24,7 +24,7 @@ export function frame(n, f, fb, n2 = n, n3 = n2) {   // n: tick read for the ble
   }
   fb.set(buf);
 }
-const K = 2;   // ticks per frame in the player
+const K = 1;   // ticks per frame in the player (see README: cadence)
 export function render(t, ctx) {
   const u = t - A_END, n = Math.floor(TICK * u); frame(n, Math.floor(n / K), ctx.fb); dac(pal, level(2, u), ctx.pal);
 }

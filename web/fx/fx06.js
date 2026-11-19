@@ -27,7 +27,7 @@ export function draw6(fb) {
   for (let i = 0; i < 64000; i++) if (ov[i]) buf[i] = ov[i] + 0xc0;
   fb.set(buf);
 }
-const K = 2, f0 = Math.floor(Math.floor(7 + TICK * FX[6].t0) / K);   // ticks per frame in the player (the DOS frame rate is machine dependent); replayed from the scene start
+const K = 1, f0 = Math.floor(Math.floor(7 + TICK * FX[6].t0) / K);   // ticks per frame in the player (the DOS frame rate is machine dependent); replayed from the scene start
 let last = -1;
 export function render(t, ctx) {
   const f = Math.floor(Math.floor(7 + TICK * t) / K);

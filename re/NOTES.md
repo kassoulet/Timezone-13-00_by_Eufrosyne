@@ -49,7 +49,9 @@ Scene 1 initial object table at 0x20270c (count 65; obj0 = type 10 tunnel, mesh 
 
 ## Verification status
 Scene 0: pixels identical to DAT image 7 in all 1727 oracle frames; DAC equals dac(pal, level) in all of them (tools/fxcheck00.mjs) given the original's own fade level.
-Fade model: 2186 of 2194 timer-record levels within 1 tick (4 DAC units) with n = 7 + TICK*t and a 1.0048 drift factor for the harness music clock (tools/fxcheck_fade.mjs ORACLE.json 7).
+Fade model (full 256 s run, orfull.npz in the scratchpad, 23356 records): harness tick n = 70*t + 8.75 (AUMAX), + 5.25 (PILIPS) since MIDAS without a sound card steps the S3M once per tick at an assumed 70 Hz (PIT is 70.39); fade.js with SYNC_LEAD 0.5 tick: AUMAX 11157 exact / 4577 within 1 tick / 260 worse of 15994, PILIPS 1603 / 262 / 126 of 1991 (tools/fxcheck_fade.mjs). The old 1.0048 drift came from fitting the first 32 s only; over 240 s it is 1.0056 (70.39/70). Scene boundaries (order,row) land on the linear fit within 0.9 tick.
+
+Frame cadence of the original in the harness (ticks per frame from the frame records): scene 1 6.8, 2 6.0, 3 7.7, 4 5.5, 5 6.4 (re/m5.json), 6 2.3, 7 6.5, ending 2.7; always 70.4 ticks/s. See README 'Cadence' for the choice of K.
 
 ## Scene 1 (0x102b90) as ported - the details that matter
 Per frame, n = [0x231f88] read once at the start: camera x=sin[5n]/128, y=-((n<<5)&0x1fff), z=sin[3n]/128, rot x=sin[9n]/0xc0-0x400, y=sin[4n]/0xc0, z=sin[7n]/0xc0 (all truncating, tables indexed &0xfff); particle k (k=0..63): x=sin[(11n+0x543k)]/128, y=sin[(9n+0x210fk)]/32 + camY - 1000, z=sin[(6n+0xa56k)]/128.

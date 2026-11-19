@@ -18,7 +18,7 @@ await ev('window.tz13.seek(20)'); await wait(1500); const a = await hash();
 ok(a[1] > 1000, 'scene 1 at 20 s draws pixels: ' + a[1]);
 await ev('window.tz13.seek(20)'); await wait(1500); const b = await hash();
 ok(a[0] === b[0], 'seek 20 / away / 20 = identical pixels');
-for (const t of [60, 90, 120, 140, 160, 190, 215, 230, 250]) {   // scenes 2..8; sim scenes (4, 5, 6) must replay identically
+for (const t of [61.3, 91.3, 121.3, 141.3, 161.3, 191.3, 216.3, 231.3, 245.3]) {   // off the multiples of 10 s: those are beat boundaries where a negative flash blacks the frame   // scenes 2..8; sim scenes (4, 5, 6) must replay identically
   await ev(`window.tz13.seek(${t})`); await wait(1200); const h1 = await hash();
   await ev('window.tz13.seek(5)'); await wait(800); await ev(`window.tz13.seek(${t})`); await wait(1200); const h2 = await hash();
   ok(h1[1] > 1000, `t=${t} draws pixels: ${h1[1]}`); ok(h1[0] === h2[0], `t=${t} repeatable`);

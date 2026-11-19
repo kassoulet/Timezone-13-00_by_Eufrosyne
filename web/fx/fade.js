@@ -2,6 +2,7 @@
 // The original runs this state machine once per PIT tick (TICK Hz); it polls the S3M (order,row) and fires the events below once per row;
 // W (MIDAS sync) commands flash the level by +-0x80/+-0x40 while no fade is active. Palette uploaded each tick: DAC = clamp(pal + level, 0..255) >> 2.
 import { SYNC } from './sync.js';
+export const SYNC_LEAD = 0.5;                           // ticks: the original's W-flash lands ~0.5 tick before the row boundary the events use (fit vs the oracle, 98.4% of 15994 timer records within 1 tick vs 96.1% with 0)
 export const TICK = 1193182 / 16951;                     // PIT ticks/s: MIDAS programs reload 16951 (70.39 Hz, measured in the harness)
 const ROW = 6 * 2.5 / 144, ORD = 64 * ROW;
 const E1 = {  // AUMAX: 'order,row' -> [cmd, resetToBlack]   cmd 0 hold/decay +-4, 1 in +2 (then 0), 2 out -2, 3 out -8, 4 out -1, 5 in +1
@@ -15,7 +16,7 @@ function build(E, dur, sync, edi0, cmd0) {
   for (let k = 0; k < n; k++) {
     const t = k / TICK, o = Math.floor(t / ORD), r = Math.floor((t - o * ORD) / ROW), key = o + ',' + r;
     if (E[key] && key !== last) { const [c, rst] = E[key]; if (rst) edi = -256; cmd = c; last = key; }
-    while (si < sy.length && sy[si][0] <= t) { const i = sy[si++][1]; if (cmd === 0) edi = i === 16 ? 128 : i === 17 ? -128 : i === 18 ? 64 : i === 19 ? -64 : edi; }
+    while (si < sy.length && sy[si][0] <= t + SYNC_LEAD / TICK) { const i = sy[si++][1]; if (cmd === 0) edi = i === 16 ? 128 : i === 17 ? -128 : i === 18 ? 64 : i === 19 ? -64 : edi; }
     if (cmd === 0) { if (edi < 0) edi += 4; if (edi > 0) edi -= 4; }
     if (cmd === 1) { edi += 2; if (edi > 0) { edi = 0; cmd = 0; } }
     if (cmd === 2) edi = Math.max(-256, edi - 2);

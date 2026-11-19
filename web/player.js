@@ -32,7 +32,8 @@ async function initAudio() {
   cp.gain.connect(ac.destination);
   await new Promise(r => cp.onInitialized(r));
   cp.onProgress(m => { const t = modIdx ? A_END + m.pos : m.pos; if (playing && Math.abs(t - cur()) > 0.25) { tBase = t; wall0 = now(); } });
-  cp.onEnded(() => { if (modIdx) { playing = false; tBase = DUR; sync(); } });
+  cp.onEnded(() => { if (modIdx && cur() > DUR - 1.5) {   // ignore the 'ended' of the module being replaced by cp.play() at the AUMAX -> PILIPS swap
+     playing = false; tBase = DUR; sync(); } });
   await setMusic(tBase);
 }
 function layout() {
@@ -71,5 +72,5 @@ function loop() {
   if (playing) draw(t);
   requestAnimationFrame(loop);
 }
-$('go').textContent = 'Click or press Space to start (sound on)'; window.tz13 = { seek, play, pause, cur };
+$('go').textContent = 'Click or press Space to start (sound on)'; window.tz13 = { seek, play, pause, cur, mod: () => modIdx, playing: () => playing };
 draw(0); loop();
