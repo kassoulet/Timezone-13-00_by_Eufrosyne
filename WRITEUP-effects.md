@@ -12,7 +12,7 @@ Figures are in `figures/` (`node tools/make_figures.mjs && python3 -I tools/make
 ## 0. At a glance
 
 * **VGA mode 13h, 320x200, 256 colours**, pixels not square: shown 4:3. Every effect renders into a 64000-byte buffer (`0x337210`) or straight into `0xA0000` and the **palette is rewritten every timer tick**.
-* **Animation is a function of the timer tick `n`, not of the music.** MIDAS reprograms the PIT (reload 16951 = **70.39 Hz**) and the timer callback increments `n` (`[0x231f88]`); effects read it once or twice per frame.
+* **Animation is a function of the timer tick `n`, not of the music.** MIDAS reprograms the PIT and, through `tmrSyncScreen`, locks the timer interrupt to the vertical retrace of mode 13h (70.086 Hz on standard VGA timing); the timer callback increments `n` (`[0x231f88]`); effects read it once or twice per frame.
   The music only decides *when a scene ends* (S3M order/row polled by the same callback) and when the fade/flash events fire.
 * **Draw as fast as you can**: there is no frame limiter. The frame rate depends on the machine (about 12 fps for the 3D scenes on the 50 MIPS model of the harness), which matters for the scenes that integrate state per frame (4, 5, 6, ending).
 * One **shared 3D engine** (section 3) draws scenes 1, 2, 3, 4, 5 and 7: integer fixed point, 4096-entry sine table, flat-shaded triangles, additive sprites, a 1-bit radix sort of the render list.
@@ -44,17 +44,16 @@ Each scene function loops until the S3M position `(order [0x231f84], row [0x231f
 
 (Scene numbers are the port's `web/fx/fxNN.js`. Scene 7 ends at AUMAX (34,16) = 228.33 s: the original then stops AUMAX, loads PILIPS and runs the ending for 28.33 s.)
 
-Frame cost seen in the Unicorn harness (20 ns per instruction, about a 50 MIPS machine; the harness clock runs at 70.4 ticks/s): scene 1 6.8 ticks/frame, 2 6.0, 3 7.7, 4 5.5, 5 6.4, 6 2.3, 7 6.5, ending 2.7.
+Frame cost seen in the Unicorn harness (20 ns per instruction, about a 50 MIPS machine; the harness clock runs at 70.4 ticks per virtual second, an artefact of its PIT model; the real tick is the 70.086 Hz vsync): scene 1 6.8 ticks/frame, 2 6.0, 3 7.7, 4 5.5, 5 6.4, 6 2.3, 7 6.5, ending 2.7.
 `README.md` explains why the player uses K = 2, 2, 1, 1 ticks per frame for scenes 4, 5, 6 and the ending.
 
-**Music/clock caveat.** With no sound card MIDAS steps the module once per timer tick assuming exactly 70 Hz, so the harness music runs 70.39/70 = 0.56 % fast against the nominal tempo and the
-oracle's "tick n" is `70 t + 8.75`. The player uses nominal music time and `n = 7 + 70.39 t`; the offset is arbitrary (it is the load time on a real machine).
+**Music/clock caveat.** In the harness `tmrSyncScreen` fails, MIDAS falls back to 70.00 Hz and the oracle's "tick n" is `70 t + 8.75` per nominal music second (its virtual clock ticks at 70.39 Hz, so its music looks 0.56 % fast; that figure comes from a harness PIT-model bug, not from the original). On real hardware the sync succeeds and the tick follows the vsync. The player uses nominal music time and `n = 7 + 70.086 t`; the offset is arbitrary (it is the load time on a real machine).
 
 ## 2. The fade / flash state machine (timer callback `0x100370`)
 
 ![fade level](figures/fade_level.png)
 
-The timer interrupt calls `0x100370` on every tick (70.39 Hz): `n++`, poll the S3M position, then run a small state machine on a command `cmd` (`[0x231f70]`) and a **level** (`[0x231f74]`, -256..0, 0 = no change).
+The timer interrupt calls `0x100370` on every tick (70.086 Hz, vsync-locked): `n++`, poll the S3M position, then run a small state machine on a command `cmd` (`[0x231f70]`) and a **level** (`[0x231f74]`, -256..0, 0 = no change).
 The same tick uploads the palette (`0x100a00`): `DAC[i] = clamp(pal[i] + level, 0, 255) >> 2` on all three channels. One scalar added to every channel means a negative level fades towards black and a positive level
 flashes towards white, with the same code.
 
@@ -130,7 +129,7 @@ Per frame, with `n` read once at the start:
 * blur as in section 3.
 
 **Exact** for a given tick: 402 of 402 oracle frames (0..53 s) identical, DAC identical (`tools/fxcheck01.mjs`). Exactness is per tick value: the oracle only records `n` at the end of the frame, so the checker searches the `n` that reproduces each frame; each one found one.
-**Approximated**: which `n` the player uses at a music time (`n = 7 + 70.39 t`) and the frame rate (the player draws at the display rate).
+**Approximated**: which `n` the player uses at a music time (`n = 7 + 70.086 t`) and the frame rate (the player draws at the display rate).
 
 ![tunnel with title](figures/s1_tunnel_title.png)
 
@@ -231,7 +230,7 @@ The 7 meshes live in the data object (`0x203838..0x22e9b8`, pointer table `0x260
 
 * **Exact** (0 differing pixels against the Unicorn run of the original): logo 1727/1727; scene 1 402/402; scene 2 311/311; scene 3 241/241; scene 4 341/341; scene 5 440/440; scene 6 914/914; scene 7 268/268; ending 726/726; the palette given the fade level the original had.
 * **Exact per tick, not per music time**: the checkers search, for each oracle frame, the tick(s) the original read. That the *player* shows those frames at the right *music time* is the fitted part.
-* **Approximated**: (1) the fade/flash level over time (`fade.js`, sections 2 and 7 of README: 98 % of timer records within one tick); (2) the mapping music time -> tick (`n = 7 + 70.39 t`, arbitrary offset);
+* **Approximated**: (1) the fade/flash level over time (`fade.js`, sections 2 and 7 of README: 98 % of timer records within one tick); (2) the mapping music time -> tick (`n = 7 + 70.086 t`, arbitrary offset);
   (3) the frame cadence of scenes 4, 5, 6 and the ending (K = 2, 2, 1, 1 ticks per frame, an assumption about a 1997 Pentium), which changes the exact landscape position and the exact particle positions you see, not the look;
   (4) the original's frame rate for scenes 1, 2, 3, 7 (the player draws at the display refresh).
 * Scene boundaries are the exact `(order,row)` the original waits for, converted to seconds with the constant S3M tempo.

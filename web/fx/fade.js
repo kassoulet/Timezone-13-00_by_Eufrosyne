@@ -3,13 +3,13 @@
 // W (MIDAS sync) commands flash the level by +-0x80/+-0x40 while no fade is active. Palette uploaded each tick: DAC = clamp(pal + level, 0..255) >> 2.
 import { SYNC } from './sync.js';
 export const SYNC_LEAD = 0.5;                           // ticks: the original's W-flash lands ~0.5 tick before the row boundary the events use (fit vs the oracle, 98.4% of 15994 timer records within 1 tick vs 96.1% with 0)
-export const TICK = 1193182 / 16951;                     // PIT ticks/s: MIDAS programs reload 16951 (70.39 Hz, measured in the harness)
+export const TICK = 70.086;                              // ticks/s: MIDAS tmrSyncScreen locks the tick to the vsync of mode 13h (25.175 MHz/(800*449) = 70.086 Hz); the harness' 70.39 is an artefact of its PIT model (re/NOTES.md 'Tick source')
 const ROW = 6 * 2.5 / 144, ORD = 64 * ROW;
 const E1 = {  // AUMAX: 'order,row' -> [cmd, resetToBlack]   cmd 0 hold/decay +-4, 1 in +2 (then 0), 2 out -2, 3 out -8, 4 out -1, 5 in +1
   '0,58': [1, 1], '1,58': [2, 0], '2,12': [1, 1], '7,40': [2, 0], '8,0': [0, 0], '11,58': [3, 0], '12,0': [1, 1], '15,58': [3, 0], '16,0': [1, 1], '19,58': [3, 0],
   '20,0': [1, 1], '25,40': [2, 0], '26,0': [0, 1], '30,26': [3, 0], '30,32': [1, 1], '33,32': [4, 0] };
 const E2 = { '0,0': [1, 1], '3,0': [4, 0] };            // PILIPS
-function build(E, dur, sync, edi0, cmd0) {
+function build(E, dur, sync, edi0, cmd0, TICK) {
   const n = Math.ceil(dur * TICK) + 1, out = new Int16Array(n);
   const sy = sync.map(([o, r, i]) => [o * ORD + r * ROW, i]).sort((a, b) => a[0] - b[0]); let si = 0;
   let cmd = cmd0, edi = edi0, last = '';   // both effects start black (edi -256) as set by the first scene's init
@@ -27,11 +27,11 @@ function build(E, dur, sync, edi0, cmd0) {
   }
   return out;
 }
-let F1, F2;
-/** fade level at module time t (module 1 = AUMAX, 2 = PILIPS) */
-export function level(mod, t) {
-  F1 ??= build(E1, 240, SYNC, -256, 2); F2 ??= build(E2, 40, [], -256, 1);
-  const F = mod === 1 ? F1 : F2, k = Math.max(0, Math.min(F.length - 1, Math.floor(t * TICK)));
+const FC = new Map();
+/** fade level at module time t (module 1 = AUMAX, 2 = PILIPS); tick = ticks per music second (the oracle harness runs at exactly 70) */
+export function level(mod, t, TICK_ = TICK) {
+  let c = FC.get(TICK_); if (!c) FC.set(TICK_, c = [build(E1, 240, SYNC, -256, 2, TICK_), build(E2, 40, [], -256, 1, TICK_)]);
+  const F = c[mod - 1], k = Math.max(0, Math.min(F.length - 1, Math.floor(t * TICK_)));
   return F[k];
 }
 /** 768-byte 8-bit RGB palette shown for source palette pal (8-bit values as stored in memory) and fade level */
